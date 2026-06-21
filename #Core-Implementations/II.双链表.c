@@ -112,8 +112,7 @@ void LinkedListRemoveAtIndex(LinkedList* list, int index) {
 
 void LinkedListTraverse(LinkedList* list) {
     Node* ptr = list->head;
-    while (ptr->next != list->tail)
-    {
+    while (ptr->next != list->tail) {
         ptr = ptr->next;
         printf("%d\t", ptr->val);
     }
@@ -130,8 +129,7 @@ void LinkedListSet(LinkedList* list, int index, int val) {
 void LinkedListDelete(LinkedList* list) {
     Node* fast = list->head->next;
     Node* slow = list->head;
-    while (fast != list->tail)
-    {
+    while (fast != list->tail) {
         slow = fast;
         fast = fast->next;
         free(slow);

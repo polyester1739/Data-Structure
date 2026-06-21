@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\#Core-Implementations\I.顺序表.c">
+    <ClCompile Include="..\#Core-Implementations\II.单链表.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\#Core-Implementations\II.双链表.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
