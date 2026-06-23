@@ -94,4 +94,261 @@ Solution:
         }
     }
 
+
+2. 螺旋矩阵    (54)
+
+给你一个 m 行 n 列的矩阵 matrix ，请按照 顺时针螺旋顺序 ，返回矩阵中的所有元素。
+
+
+示例 1：
+  输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+  输出：[1,2,3,6,9,8,7,4,5]
+
+示例 2：
+  输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
+  输出：[1,2,3,4,8,12,11,10,9,5,6,7]
+
+示例 3：
+  输入：matrix = [[1,2],[3,4]]
+  输出：
+
+示例 4：
+  输入：matrix = [[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16],[17,18,19,20],[21,22,23,24]]
+  输出：
+
+提示：
+  m == matrix.length
+  n == matrix[i].length
+  1 <= m, n <= 10
+  -100 <= matrix[i][j] <= 100
+
+Solution:
+  C:
+    /**
+     * Note: The returned array must be malloced, assume caller calls free().
+     */
+    int* spiralOrder(int** matrix, int matrixSize, int* matrixColSize, int* returnSize) {
+        // 设置四个方向上的边界
+        int upper = 0;
+        int lower = matrixSize - 1;
+        int left = 0;
+        int right = matrixColSize[0] - 1;
+    
+        // 设置返回数组
+        int* ret = (int*)malloc(sizeof(int) * matrixSize * matrixColSize[0]);
+        int p = 0;
+    
+        // 按照右下左上的顺序来逐步遍历
+        while (upper < lower && left < right) {
+            for (int i = left; i <= right; i++) ret[p++] = matrix[upper][i];
+            upper++;
+            for (int i = upper; i <= lower; i++) ret[p++] = matrix[i][right];
+            right--;
+            for (int i = right; i >= left; i--) ret[p++] = matrix[lower][i];
+            lower--;
+            for (int i = lower; i >= upper; i--) ret[p++] = matrix[i][left];
+            left++;
+        }
+    
+        // 处理行数/列数为奇数的情况
+        if (upper == lower && left != right)
+            for (int i = left; i <= right; i++) ret[p++] = matrix[upper][i];
+        else if (upper != lower && left == right)
+            for (int i = upper; i <= lower; i++) ret[p++] = matrix[i][left];
+        else if (upper == lower && left == right) ret[p++] = matrix[upper][left];
+    
+        *returnSize = p;
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> spiralOrder(vector<vector<int>>& matrix) {
+            // 设置四个方向上的边界
+            int upper = 0;
+            int lower = matrix.size() - 1;
+            int left = 0;
+            int right = matrix[0].size() - 1;
+    
+            // 设置返回数组
+            vector<int> ret;
+    
+            // 按照右下左上的顺序来逐步遍历
+            while (upper < lower && left < right) {
+                for (int i = left; i <= right; i++) ret.push_back(matrix[upper][i]);
+                upper++;
+                for (int i = upper; i <= lower; i++) ret.push_back(matrix[i][right]);
+                right--;
+                for (int i = right; i >= left; i--) ret.push_back(matrix[lower][i]);
+                lower--;
+                for (int i = lower; i >= upper; i--) ret.push_back(matrix[i][left]);
+                left++;
+            }
+    
+            // 处理行数/列数为奇数的情况
+            if (upper == lower && left != right)
+                for (int i = left; i <= right; i++) ret.push_back(matrix[upper][i]);
+            else if (upper != lower && left == right)
+                for (int i = upper; i <= lower; i++) ret.push_back(matrix[i][left]);
+            else if (upper == lower && left == right) ret.push_back(matrix[upper][left]);
+    
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public List<Integer> spiralOrder(int[][] matrix) {
+            // 设置四个方向上的边界
+            int upper = 0;
+            int lower = matrix.length - 1;
+            int left = 0;
+            int right = matrix[0].length - 1;
+    
+            // 设置返回数组
+            List<Integer> ret = new ArrayList<>();
+            int p = 0;
+    
+            // 按照右下左上的顺序来逐步遍历
+            while (upper < lower && left < right) {
+                for (int i = left; i <= right; i++) ret.add(matrix[upper][i]);
+                upper++;
+                for (int i = upper; i <= lower; i++) ret.add(matrix[i][right]);
+                right--;
+                for (int i = right; i >= left; i--) ret.add(matrix[lower][i]);
+                lower--;
+                for (int i = lower; i >= upper; i--) ret.add(matrix[i][left]);
+                left++;
+            }
+    
+            // 处理行数/列数为奇数的情况
+            if (upper == lower && left != right)
+                for (int i = left; i <= right; i++) ret.add(matrix[upper][i]);
+            else if (upper != lower && left == right)
+                for (int i = upper; i <= lower; i++) ret.add(matrix[i][left]);
+            else if (upper == lower && left == right) ret.add(matrix[upper][left]);
+    
+            return ret;
+        }
+    }
+
+
+3. 螺旋矩阵 II    (59)
+
+给你一个正整数 n ，生成一个包含 1 到 n2 所有元素，且元素按顺时针顺序螺旋排列的 n x n 正方形矩阵 matrix 。
+
+
+示例 1：
+  输入：n = 3
+  输出：[[1,2,3],[8,9,4],[7,6,5]]
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int** generateMatrix(int n, int* returnSize, int** returnColumnSizes) {
+        // 生成返回的矩阵
+        int** ret = (int**)malloc(sizeof(int*) * n);
+        for (int i = 0; i < n; i++) ret[i] = (int*)malloc(sizeof(int) * n);
+    
+        *returnSize = n;
+        *returnColumnSizes = (int*)malloc(sizeof(int) * n);
+        for (int i = 0; i < n; i++) (*returnColumnSizes)[i] = n;
+        
+        // 设置边界和辅助变量
+        int upper = 0;
+        int lower = n - 1;
+        int left = 0;
+        int right = n - 1;
+        int count = 1;
+    
+        // 按照右下左上的顺序来逐步遍历
+        while (upper < lower && left < right) {
+            for (int i = left; i <= right; i++) ret[upper][i] = count++;
+            upper++;
+            for (int i = upper; i <= lower; i++) ret[i][right] = count++;
+            right--;
+            for (int i = right; i >= left; i--) ret[lower][i] = count++;
+            lower--;
+            for (int i = lower; i >= upper; i--) ret[i][left] = count++;
+            left++;
+        }
+    
+        // 处理位于中心的元素
+        if (upper == lower && left == right) ret[upper][left] = count++;
+    
+        return ret;
+    }
+
+ C++:
+    class Solution {
+    public:
+        vector<vector<int>> generateMatrix(int n) {
+            // 生成返回的矩阵
+            vector<vector<int>> ret(n);
+            for (int i = 0; i < n; i++) ret[i] = vector<int>(n);
+            
+            // 设置边界和辅助变量
+            int upper = 0;
+            int lower = n - 1;
+            int left = 0;
+            int right = n - 1;
+            int count = 1;
+    
+            // 按照右下左上的顺序来逐步遍历
+            while (upper < lower && left < right) {
+                for (int i = left; i <= right; i++) ret[upper][i] = count++;
+                upper++;
+                for (int i = upper; i <= lower; i++) ret[i][right] = count++;
+                right--;
+                for (int i = right; i >= left; i--) ret[lower][i] = count++;
+                lower--;
+                for (int i = lower; i >= upper; i--) ret[i][left] = count++;
+                left++;
+            }
+    
+            // 处理位于中心的元素
+            if (upper == lower && left == right) ret[upper][left] = count++;
+    
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[][] generateMatrix(int n) {
+            // 生成返回的矩阵
+            int[][] ret = new int[n][];
+            for (int i = 0; i < n; i++) ret[i] = new int[n];
+            
+            // 设置边界和辅助变量
+            int upper = 0;
+            int lower = n - 1;
+            int left = 0;
+            int right = n - 1;
+            int count = 1;
+    
+            // 按照右下左上的顺序来逐步遍历
+            while (upper < lower && left < right) {
+                for (int i = left; i <= right; i++) ret[upper][i] = count++;
+                upper++;
+                for (int i = upper; i <= lower; i++) ret[i][right] = count++;
+                right--;
+                for (int i = right; i >= left; i--) ret[lower][i] = count++;
+                lower--;
+                for (int i = lower; i >= upper; i--) ret[i][left] = count++;
+                left++;
+            }
+    
+            // 处理位于中心的元素
+            if (upper == lower && left == right) ret[upper][left] = count++;
+    
+            return ret;
+        }
+    }
+
 来源：力扣（LeetCode）
