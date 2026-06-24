@@ -242,6 +242,44 @@ Solution:
         return intervals;
     }
 
+  C++:
+    class Solution {
+    public:
+        static int cmp(const void* a, const void* b) {
+            return (*(int**)a)[0] - (*(int**)b)[0];
+        }
+    
+        void merge2Intervals(vector<int>& interval1, vector<int>& interval2) {
+            // 实现对于给定的两个区间的合并
+            interval1[0] = (interval1[0] > interval2[0]) ? interval2[0] : interval1[0];
+            interval1[1] = (interval1[1] > interval2[1]) ? interval1[1] : interval2[1];
+        }
+    
+        vector<vector<int>> merge(vector<vector<int>>& intervals) {
+            // 先按照区间的左端点进行排序
+            std::qsort(intervals.data(), intervals.size(), sizeof(intervals[0]), cmp);
+    
+            // 排序完成后，只需要考虑后一个区间的左端点是否落在前一个区间内部
+            int read = 0, write = 0;
+            int removed = 0;
+            for (read; read < intervals.size(); read++) {
+                if (write == 0 || intervals[write-1][1] < intervals[read][0]) {
+                    intervals[write] = intervals[read];
+                    write++;
+                }
+                else {
+                    merge2Intervals(intervals[write-1], intervals[read]);
+                    removed++;
+                }
+            }
+    
+            for (int i = 0; i < removed; i++) intervals.pop_back();
+            intervals.shrink_to_fit();
+    
+            return intervals;
+        }
+    };
+
 
 4. 旋转矩阵
 
