@@ -177,7 +177,7 @@ Java:
 
 3. 合并区间    (56)
 
-以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [starti, endi] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
+以数组 intervals 表示若干个区间的集合，其中单个区间为 intervals[i] = [start_i, end_i] 。请你合并所有重叠的区间，并返回 一个不重叠的区间数组，该数组需恰好覆盖输入中的所有区间 。
 
 
 示例 1：
@@ -381,6 +381,64 @@ Solution:
                 }
             }
         }
+    }
+
+
+5. 零矩阵
+
+编写一种算法，若M × N矩阵中某个元素为0，则将其所在的行与列清零。
+
+
+示例 1：
+  输入：
+  [
+    [1,1,1],
+    [1,0,1],
+    [1,1,1]
+  ]
+  输出：
+  [
+    [1,0,1],
+    [0,0,0],
+    [1,0,1]
+  ]
+
+Solution:
+  C:
+    void setZeroes(int** matrix, int matrixSize, int* matrixColSize) {
+        // 创建参数表用于记录需要置为0的行和列
+        bool* row = (bool*)calloc(matrixSize, sizeof(bool));
+        bool* col = (bool*)calloc(matrixColSize[0], sizeof(bool));
+    
+        // 遍历矩阵，找出所有值为0的元素
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixColSize[0]; j++) {
+                if (matrix[i][j] == 0) {
+                    row[i] = 1;
+                    col[j] = 1;
+                }
+            }
+        }
+    
+        // 遍历参数表将对应的行和列置为0
+        for (int i = 0; i < matrixSize; i++) {
+            if (row[i] != 0) {
+                for (int j = 0; j < matrixColSize[0]; j++) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    
+        for (int i = 0; i < matrixColSize[0]; i++) {
+            if (col[i] != 0) {
+                for (int j = 0; j < matrixSize; j++) {
+                    matrix[j][i] = 0;
+                }
+            }
+        }
+    
+        free(row);
+        free(col);
     }
 
 
