@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct HashNode HashNode;
 typedef struct HashTable HashTable;
+typedef struct HashSet HashSet;
 
 struct HashNode {
-    int key;
-    int value;
-    HashNode* next;
+	int key;
+	int value;
+	HashNode* next;
 };
 
 struct HashTable {
@@ -16,40 +18,63 @@ struct HashTable {
 	int capacity;
 };
 
+struct HashSet {
+	HashTable* table;
+};
+
 const int INIT_CAPACITY = 6;
 
-int hashFunction(HashTable* table, int key);
-HashNode* initHashTable(int initCapacity);
-int hashTableGet(HashTable* table, int key);
-void hashTablePut(HashTable* table, int key, int value);
-void hashTableRemove(HashTable* table, int key);
-void hashTableResize(HashTable* table, int newCapacity);
-void hashTableTraversal(HashTable* table);
-void hashTableDelete(HashTable* table);
+HashSet* initHashSet(int initCapacity);
+void hashSetPut(HashSet* set, int key, int value);
+void hashSetRemove(HashSet* set, int key);
+bool hashSetContains(HashSet* set, int key);
+int hashSetGetSize(HashSet* set);
+void hashSetDelete(HashSet* set);
 
 int main(int argc, const char* argv[]) {
-	HashTable* table = initHashTable(INIT_CAPACITY);
-	hashTablePut(table, 0, 10);
-	hashTablePut(table, 25, 20);
-	hashTablePut(table, 50, 30);
-	hashTablePut(table, 75, 40);
-	hashTablePut(table, 13, 50);
-	hashTablePut(table, 26, 60);
-	hashTablePut(table, 39, 70);
-	hashTablePut(table, 52, 80);
-	hashTableTraversal(table);
-	hashTableRemove(table, 25);
-	hashTableRemove(table, 50);
-	hashTableRemove(table, 13);
-	hashTableRemove(table, 39);
-	hashTableTraversal(table);
-	printf("%d\n", hashTableGet(table, 75));
-	printf("%d\n", hashTableGet(table, 25));
-	hashTableDelete(table);
+	HashSet* set = initHashSet(INIT_CAPACITY);
+	hashSetPut(set, 0, 10);
+	hashSetPut(set, 25, 20);
+	hashSetPut(set, 50, 30);
+	hashSetPut(set, 75, 40);
+	hashSetPut(set, 13, 50);
+	hashSetPut(set, 26, 60);
+	hashSetPut(set, 39, 70);
+	hashSetPut(set, 52, 80);
+	printf("Size: %d\n", hashSetGetSize(set));
+	hashSetRemove(set, 25);
+	hashSetRemove(set, 50);
+	hashSetRemove(set, 13);
+	hashSetRemove(set, 39);
+	printf("Size: %d\n", hashSetGetSize(set));
+	printf("Contains 75: %d\n", hashSetContains(set, 75));
+	printf("Contains 25: %d\n", hashSetContains(set, 25));
+	hashSetDelete(set);
 }
 
 int hashFunction(HashTable* table, int key) {
 	return (key & 0x7FFFFFFF) % table->capacity;
+}
+
+void hashTableResize(HashTable* table, int newCapacity) {
+	if (newCapacity <= 0) newCapacity = 1;
+	HashNode** newTable = (HashNode**)calloc(newCapacity, sizeof(HashNode*));
+	if (!newTable) exit(EXIT_FAILURE);
+
+	for (int i = 0; i < table->capacity; i++) {
+		HashNode* current = table->hashTable[i];
+		while (current != NULL) {
+			HashNode* next = current->next;
+			int newIndex = (current->key & 0x7FFFFFFF) % newCapacity;
+			current->next = newTable[newIndex];
+			newTable[newIndex] = current;
+			current = next;
+		}
+	}
+
+	free(table->hashTable);
+	table->hashTable = newTable;
+	table->capacity = newCapacity;
 }
 
 HashNode* initHashTable(int initCapacity) {
@@ -112,27 +137,6 @@ void hashTableRemove(HashTable* table, int key) {
 	}
 }
 
-void hashTableResize(HashTable* table, int newCapacity) {
-	if (newCapacity <= 0) newCapacity = 1;
-	HashNode** newTable = (HashNode**)calloc(newCapacity, sizeof(HashNode*));
-	if (!newTable) exit(EXIT_FAILURE);
-
-	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->hashTable[i];
-		while (current != NULL) {
-			HashNode* next = current->next;
-			int newIndex = (current->key & 0x7FFFFFFF) % newCapacity;
-			current->next = newTable[newIndex];
-			newTable[newIndex] = current;
-			current = next;
-		}
-	}
-
-	free(table->hashTable);
-	table->hashTable = newTable;
-	table->capacity = newCapacity;
-}
-
 void hashTableTraversal(HashTable* table) {
 	for (int i = 0; i < table->capacity; i++) {
 		HashNode* current = table->hashTable[i];
@@ -155,4 +159,32 @@ void hashTableDelete(HashTable* table) {
 	}
 	free(table->hashTable);
 	free(table);
+}
+
+HashSet* initHashSet(int initCapacity) {
+	HashSet* set = (HashSet*)malloc(sizeof(HashSet));
+	if (!set) exit(EXIT_FAILURE);
+	set->table = initHashTable(initCapacity);
+	return set;
+}
+
+void hashSetPut(HashSet* set, int key, int value) {
+	hashTablePut(set->table, key, value);
+}
+
+void hashSetRemove(HashSet* set, int key) {
+	hashTableRemove(set->table, key);
+}
+
+bool hashSetContains(HashSet* set, int key) {
+	return hashTableGet(set->table, key) != -1;
+}
+
+int hashSetGetSize(HashSet* set) {
+	return set->table->size;
+}
+
+void hashSetDelete(HashSet* set) {
+	hashTableDelete(set->table);
+	free(set);
 }
