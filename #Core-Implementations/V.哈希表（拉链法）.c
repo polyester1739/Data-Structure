@@ -43,8 +43,8 @@ int main(int argc, const char* argv[]) {
 	hashTableRemove(table, 13);
 	hashTableRemove(table, 39);
 	hashTableTraversal(table);
-	printf("%d\n", hashTableGet(table, 75));
-	printf("%d\n", hashTableGet(table, 25));
+	printf("Key 75: %d\n", hashTableGet(table, 75));
+	printf("Key 25: %d\n", hashTableGet(table, 25));
 	hashTableDelete(table);
 }
 

@@ -47,8 +47,8 @@ int main(int argc, const char* argv[]) {
 	hashSetRemove(set, 13);
 	hashSetRemove(set, 39);
 	printf("Size: %d\n", hashSetGetSize(set));
-	printf("Contains 75: %d\n", hashSetContains(set, 75));
-	printf("Contains 25: %d\n", hashSetContains(set, 25));
+	printf("Contains 75: %s\n", hashSetContains(set, 75) ? "true" : "false");
+	printf("Contains 25: %s\n", hashSetContains(set, 25) ? "true" : "false");
 	hashSetDelete(set);
 }
 
