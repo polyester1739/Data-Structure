@@ -15,10 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\#Core-Implementations\V.哈希集合.c">
+    <ClCompile Include="..\#Core-Implementations\V.哈希表（拉链法）.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\#Core-Implementations\V.哈希表（拉链法）.c">
+    <ClCompile Include="..\#Core-Implementations\V.哈希集合.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

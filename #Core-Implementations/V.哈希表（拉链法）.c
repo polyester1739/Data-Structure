@@ -18,7 +18,7 @@ struct HashTable {
 
 const int INIT_CAPACITY = 6;
 
-int hashFunction(HashTable* table, int key);
+int hashFunction(int capacity, int key);
 HashNode* initHashTable(int initCapacity);
 int hashTableGet(HashTable* table, int key);
 void hashTablePut(HashTable* table, int key, int value);
@@ -48,8 +48,8 @@ int main(int argc, const char* argv[]) {
 	hashTableDelete(table);
 }
 
-int hashFunction(HashTable* table, int key) {
-	return (key & 0x7FFFFFFF) % table->capacity;
+int hashFunction(int capacity, int key) {
+	return (key & 0x7FFFFFFF) % capacity;
 }
 
 HashNode* initHashTable(int initCapacity) {
@@ -64,7 +64,7 @@ HashNode* initHashTable(int initCapacity) {
 }
 
 int hashTableGet(HashTable* table, int key) {
-	int index = hashFunction(table, key);
+	int index = hashFunction(table->capacity, key);
 	HashNode* current = table->hashTable[index];
 	while (current != NULL) {
 		if (current->key == key) return current->value;
@@ -74,7 +74,7 @@ int hashTableGet(HashTable* table, int key) {
 }
 
 void hashTablePut(HashTable* table, int key, int value) {
-	int index = hashFunction(table, key);
+	int index = hashFunction(table->capacity, key);
 	HashNode* current = table->hashTable[index];
 	while (current != NULL) {
 		if (current->key == key) {
@@ -95,7 +95,7 @@ void hashTablePut(HashTable* table, int key, int value) {
 }
 
 void hashTableRemove(HashTable* table, int key) {
-	int index = hashFunction(table, key);
+	int index = hashFunction(table->capacity, key);
 	HashNode* current = table->hashTable[index];
 	HashNode* prev = NULL;
 	while (current != NULL) {
@@ -104,7 +104,7 @@ void hashTableRemove(HashTable* table, int key) {
 			else prev->next = current->next;
 			free(current);
 			table->size--;
-			if (table->size < table->capacity * 0.25) hashTableResize(table, table->capacity / 2);
+			if (table->size < table->capacity * 0.25) hashTableResize(table, (int)(table->capacity / 2));
 			return;
 		}
 		prev = current;
@@ -121,7 +121,7 @@ void hashTableResize(HashTable* table, int newCapacity) {
 		HashNode* current = table->hashTable[i];
 		while (current != NULL) {
 			HashNode* next = current->next;
-			int newIndex = (current->key & 0x7FFFFFFF) % newCapacity;
+			int newIndex = hashFunction(newCapacity, current->key);
 			current->next = newTable[newIndex];
 			newTable[newIndex] = current;
 			current = next;
