@@ -91,7 +91,9 @@ void hashTablePut(HashTable* table, int key, int value) {
 	table->hashTable[index] = newNode;
 	table->size++;
 
-	if (table->size > table->capacity * 0.75) hashTableResize(table, table->capacity * 2);
+	if (table->size > table->capacity * 0.75) {
+		hashTableResize(table, table->capacity * 2);
+	}
 }
 
 void hashTableRemove(HashTable* table, int key) {
@@ -104,7 +106,9 @@ void hashTableRemove(HashTable* table, int key) {
 			else prev->next = current->next;
 			free(current);
 			table->size--;
-			if (table->size < table->capacity * 0.25) hashTableResize(table, (int)(table->capacity / 2));
+			if (table->capacity > INIT_CAPACITY && table->size < table->capacity * 0.125) {
+				hashTableResize(table, table->capacity / 2);
+			}
 			return;
 		}
 		prev = current;
