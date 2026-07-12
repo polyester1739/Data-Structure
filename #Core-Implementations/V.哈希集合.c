@@ -13,7 +13,7 @@ struct HashNode {
 };
 
 struct HashTable {
-	HashNode** hashTable;
+	HashNode** buckets;
 	int size;
 	int capacity;
 };
@@ -58,22 +58,22 @@ int hashFunction(int capacity, int key) {
 
 void hashTableResize(HashTable* table, int newCapacity) {
 	if (newCapacity <= 0) newCapacity = 1;
-	HashNode** newTable = (HashNode**)calloc(newCapacity, sizeof(HashNode*));
-	if (!newTable) exit(EXIT_FAILURE);
+	HashNode** newBuckets = (HashNode**)calloc(newCapacity, sizeof(HashNode*));
+	if (!newBuckets) exit(EXIT_FAILURE);
 
 	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->hashTable[i];
+		HashNode* current = table->buckets[i];
 		while (current != NULL) {
 			HashNode* next = current->next;
 			int newIndex = hashFunction(newCapacity, current->key);
-			current->next = newTable[newIndex];
-			newTable[newIndex] = current;
+			current->next = newBuckets[newIndex];
+			newBuckets[newIndex] = current;
 			current = next;
 		}
 	}
 
-	free(table->hashTable);
-	table->hashTable = newTable;
+	free(table->buckets);
+	table->buckets = newBuckets;
 	table->capacity = newCapacity;
 }
 
@@ -83,14 +83,14 @@ HashNode* initHashTable(int initCapacity) {
 	table->size = 0;
 	if (initCapacity <= 0) table->capacity = 1;
 	else table->capacity = initCapacity;
-	table->hashTable = (HashNode**)calloc(table->capacity, sizeof(HashNode*));
-	if (!table->hashTable) exit(EXIT_FAILURE);
+	table->buckets = (HashNode**)calloc(table->capacity, sizeof(HashNode*));
+	if (!table->buckets) exit(EXIT_FAILURE);
 	return table;
 }
 
 int hashTableGet(HashTable* table, int key) {
 	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->hashTable[index];
+	HashNode* current = table->buckets[index];
 	while (current != NULL) {
 		if (current->key == key) return current->value;
 		current = current->next;
@@ -100,7 +100,7 @@ int hashTableGet(HashTable* table, int key) {
 
 void hashTablePut(HashTable* table, int key, int value) {
 	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->hashTable[index];
+	HashNode* current = table->buckets[index];
 	while (current != NULL) {
 		if (current->key == key) {
 			current->value = value;
@@ -112,8 +112,8 @@ void hashTablePut(HashTable* table, int key, int value) {
 	if (!newNode) exit(EXIT_FAILURE);
 	newNode->key = key;
 	newNode->value = value;
-	newNode->next = table->hashTable[index];
-	table->hashTable[index] = newNode;
+	newNode->next = table->buckets[index];
+	table->buckets[index] = newNode;
 	table->size++;
 
 	if (table->size > table->capacity * 0.75) {
@@ -123,11 +123,11 @@ void hashTablePut(HashTable* table, int key, int value) {
 
 void hashTableRemove(HashTable* table, int key) {
 	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->hashTable[index];
+	HashNode* current = table->buckets[index];
 	HashNode* prev = NULL;
 	while (current != NULL) {
 		if (current->key == key) {
-			if (prev == NULL) table->hashTable[index] = current->next;
+			if (prev == NULL) table->buckets[index] = current->next;
 			else prev->next = current->next;
 			free(current);
 			table->size--;
@@ -143,7 +143,7 @@ void hashTableRemove(HashTable* table, int key) {
 
 void hashTableTraversal(HashTable* table) {
 	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->hashTable[i];
+		HashNode* current = table->buckets[i];
 		while (current != NULL) {
 			printf("%d\t", current->value);
 			current = current->next;
@@ -154,14 +154,14 @@ void hashTableTraversal(HashTable* table) {
 
 void hashTableDelete(HashTable* table) {
 	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->hashTable[i];
+		HashNode* current = table->buckets[i];
 		while (current != NULL) {
 			HashNode* next = current->next;
 			free(current);
 			current = next;
 		}
 	}
-	free(table->hashTable);
+	free(table->buckets);
 	free(table);
 }
 

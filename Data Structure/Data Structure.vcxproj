@@ -19,7 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\#Core-Implementations\V.哈希表（拉链法）.c" />
     <ClCompile Include="..\#Core-Implementations\V.哈希链表.c" />
+    <ClCompile Include="..\#Core-Implementations\V.哈希集合.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>

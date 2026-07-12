@@ -15,7 +15,7 @@ struct Node {
 };
 
 struct LinkedHashMap {
-	Node** hashMap;
+	Node** buckets;
 	int size;
 	int capacity;
 	Node* head;
@@ -62,7 +62,7 @@ int hashFunction(int capacity, int key) {
 LinkedHashMap* initLinkedHashMap() {
 	LinkedHashMap* map = (LinkedHashMap*)malloc(sizeof(LinkedHashMap));
 	if (!map) exit(EXIT_FAILURE);
-	map->hashMap = (Node**)calloc(INIT_CAPACITY, sizeof(Node*));
+	map->buckets = (Node**)calloc(INIT_CAPACITY, sizeof(Node*));
 	map->size = 0;
 	map->capacity = INIT_CAPACITY;
 	map->head = (Node*)malloc(sizeof(Node));
@@ -74,7 +74,7 @@ LinkedHashMap* initLinkedHashMap() {
 
 int linkedHashMapGet(LinkedHashMap* map, int key) {
 	int index = hashFunction(map->capacity, key);
-	Node* cur = map->hashMap[index];
+	Node* cur = map->buckets[index];
 	while (cur != NULL) {
 		if (cur->key == key) return cur->value;
 		cur = cur->hashNext;
@@ -84,7 +84,7 @@ int linkedHashMapGet(LinkedHashMap* map, int key) {
 
 void linkedHashMapPut(LinkedHashMap* map, int key, int value) {
 	int index = hashFunction(map->capacity, key);
-	Node* cur = map->hashMap[index];
+	Node* cur = map->buckets[index];
 	while (cur != NULL) {
 		if (cur->key == key) {
 			cur->value = value;
@@ -95,8 +95,8 @@ void linkedHashMapPut(LinkedHashMap* map, int key, int value) {
 	Node* newnode = (Node*)malloc(sizeof(Node));
 	newnode->key = key;
 	newnode->value = value;
-	newnode->hashNext = map->hashMap[index];
-	map->hashMap[index] = newnode;
+	newnode->hashNext = map->buckets[index];
+	map->buckets[index] = newnode;
 	newnode->prev = map->tail->prev;
 	newnode->next = map->tail;
 	map->tail->prev->next = newnode;
@@ -110,12 +110,12 @@ void linkedHashMapPut(LinkedHashMap* map, int key, int value) {
 
 void linkedHashMapRemove(LinkedHashMap* map, int key) {
 	int index = hashFunction(map->capacity, key);
-	Node* cur = map->hashMap[index];
+	Node* cur = map->buckets[index];
 	Node* hashPrev = NULL;
 
 	while (cur != NULL) {
 		if (cur->key == key) {
-			if (hashPrev == NULL) map->hashMap[index] = cur->hashNext;
+			if (hashPrev == NULL) map->buckets[index] = cur->hashNext;
 			else hashPrev->hashNext = cur->hashNext;
 			cur->prev->next = cur->next;
 			cur->next->prev = cur->prev;
@@ -132,20 +132,20 @@ void linkedHashMapRemove(LinkedHashMap* map, int key) {
 }
 
 void linkedHashMapResize(LinkedHashMap* map, int newCapacity) {
-	Node** newMap = (Node**)calloc(newCapacity, sizeof(Node*));
-	if (!newMap) exit(EXIT_FAILURE);
+	Node** newBuckets = (Node**)calloc(newCapacity, sizeof(Node*));
+	if (!newBuckets) exit(EXIT_FAILURE);
 	for (int i = 0; i < map->capacity; i++) {
-		Node* cur = map->hashMap[i];
+		Node* cur = map->buckets[i];
 		while (cur != NULL) {
 			int newIndex = hashFunction(newCapacity, cur->key);
 			Node* nextNode = cur->hashNext;
-			cur->hashNext = newMap[newIndex];
-			newMap[newIndex] = cur;
+			cur->hashNext = newBuckets[newIndex];
+			newBuckets[newIndex] = cur;
 			cur = nextNode;
 		}
 	}
-	free(map->hashMap);
-	map->hashMap = newMap;
+	free(map->buckets);
+	map->buckets = newBuckets;
 	map->capacity = newCapacity;
 }
 
@@ -160,7 +160,7 @@ void linkedHashMapTraverseInOrder(LinkedHashMap* map) {
 
 void linkedHashMapTraverseWithoutOrder(LinkedHashMap* map) {
 	for (int i = 0; i < map->capacity; i++) {
-		Node* cur = map->hashMap[i];
+		Node* cur = map->buckets[i];
 		while (cur != NULL) {
 			printf("%d\t", cur->value);
 			cur = cur->hashNext;
@@ -178,6 +178,6 @@ void linkedHashMapDelete(LinkedHashMap* map) {
 	}
 	free(map->head);
 	free(map->tail);
-	free(map->hashMap);
+	free(map->buckets);
 	free(map);
 }
