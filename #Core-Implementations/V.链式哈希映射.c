@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 const int INIT_CAPACITY = 6;
 
@@ -24,7 +25,7 @@ struct LinkedHashMap {
 
 int hashFunction(int capacity, int key);
 LinkedHashMap* initLinkedHashMap();
-int linkedHashMapGet(LinkedHashMap* map, int key);
+bool linkedHashMapGet(LinkedHashMap* map, int key, int* result);
 void linkedHashMapPut(LinkedHashMap* map, int key, int value);
 void linkedHashMapRemove(LinkedHashMap* map, int key);
 void linkedHashMapResize(LinkedHashMap* map, int newCapacity);
@@ -50,8 +51,12 @@ int main(int argc, const char* argv[]) {
 	linkedHashMapRemove(map, 39);
 	linkedHashMapTraverseInOrder(map);
 	linkedHashMapTraverseWithoutOrder(map);
-	printf("Key 75: %d\n", linkedHashMapGet(map, 75));
-	printf("Key 25: %d\n", linkedHashMapGet(map, 25));
+
+	int temp;
+	if (linkedHashMapGet(map, 75, &temp)) printf("Key 75: %d\n", temp);
+	else printf("Key 75 not found.\n");
+	if (linkedHashMapGet(map, 25, &temp)) printf("Key 25: %d\n", temp);
+	else printf("Key 25 not found.\n");
 	linkedHashMapDelete(map);
 }
 
@@ -72,14 +77,17 @@ LinkedHashMap* initLinkedHashMap() {
 	return map;
 }
 
-int linkedHashMapGet(LinkedHashMap* map, int key) {
+bool linkedHashMapGet(LinkedHashMap* map, int key, int* result) {
 	int index = hashFunction(map->capacity, key);
 	Node* cur = map->buckets[index];
 	while (cur != NULL) {
-		if (cur->key == key) return cur->value;
+		if (cur->key == key) {
+			*result = cur->value;
+			return true;
+		}
 		cur = cur->hashNext;
 	}
-	return -1; // Key not found
+	return false; // Key not found
 }
 
 void linkedHashMapPut(LinkedHashMap* map, int key, int value) {

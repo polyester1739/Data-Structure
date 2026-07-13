@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\#Core-Implementations\V.链式哈希映射.c">
+    <ClCompile Include="..\#Core-Implementations\V.哈希集合.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

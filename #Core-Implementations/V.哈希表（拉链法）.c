@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 typedef struct HashNode HashNode;
 typedef struct HashTable HashTable;
@@ -20,7 +21,7 @@ const int INIT_CAPACITY = 6;
 
 int hashFunction(int capacity, int key);
 HashNode* initHashTable(int initCapacity);
-int hashTableGet(HashTable* table, int key);
+bool hashTableGet(HashTable* table, int key, int* result);
 void hashTablePut(HashTable* table, int key, int value);
 void hashTableRemove(HashTable* table, int key);
 void hashTableResize(HashTable* table, int newCapacity);
@@ -43,8 +44,12 @@ int main(int argc, const char* argv[]) {
 	hashTableRemove(table, 13);
 	hashTableRemove(table, 39);
 	hashTableTraversal(table);
-	printf("Key 75: %d\n", hashTableGet(table, 75));
-	printf("Key 25: %d\n", hashTableGet(table, 25));
+
+	int temp;
+	if (hashTableGet(table, 75, &temp)) printf("Key 75: %d\n", temp);
+	else printf("Key 75 not found.\n");
+	if (hashTableGet(table, 25, &temp)) printf("Key 25: %d\n", temp);
+	else printf("Key 25 not found.\n");
 	hashTableDelete(table);
 }
 
@@ -63,14 +68,17 @@ HashNode* initHashTable(int initCapacity) {
 	return table;
 }
 
-int hashTableGet(HashTable* table, int key) {
+bool hashTableGet(HashTable* table, int key, int* result) {
 	int index = hashFunction(table->capacity, key);
 	HashNode* current = table->buckets[index];
 	while (current != NULL) {
-		if (current->key == key) return current->value;
+		if (current->key == key) {
+			*result = current->value;
+			return true;
+		}
 		current = current->next;
 	}
-	return -1; // Key not found
+	return false; // Key not found
 }
 
 void hashTablePut(HashTable* table, int key, int value) {

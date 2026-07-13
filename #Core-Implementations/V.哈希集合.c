@@ -88,14 +88,17 @@ HashNode* initHashTable(int initCapacity) {
 	return table;
 }
 
-int hashTableGet(HashTable* table, int key) {
+bool hashTableGet(HashTable* table, int key, int* result) {
 	int index = hashFunction(table->capacity, key);
 	HashNode* current = table->buckets[index];
 	while (current != NULL) {
-		if (current->key == key) return current->value;
+		if (current->key == key) {
+			*result = current->value;
+			return true;
+		}
 		current = current->next;
 	}
-	return -1; // Key not found
+	return false; // Key not found
 }
 
 void hashTablePut(HashTable* table, int key, int value) {
@@ -181,7 +184,8 @@ void hashSetRemove(HashSet* set, int key) {
 }
 
 bool hashSetContains(HashSet* set, int key) {
-	return hashTableGet(set->table, key) != -1;
+	int temp;
+	return hashTableGet(set->table, key, &temp);
 }
 
 int hashSetGetSize(HashSet* set) {
