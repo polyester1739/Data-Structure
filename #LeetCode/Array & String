@@ -514,5 +514,174 @@ Solution:
         }
     }
 
+
+6. 对角线遍历
+
+给你一个大小为 m x n 的矩阵 mat ，请以对角线遍历的顺序，用一个数组返回这个矩阵中的所有元素。
+
+
+示例 1：
+  输入：mat = [[1,2,3],[4,5,6],[7,8,9]]
+  输出：[1,2,4,7,5,3,6,8,9]
+
+示例 2：
+  输入：mat = [[1,2],[3,4]]
+  输出：[1,2,3,4]
+
+提示：
+  m == mat.length
+  n == mat[i].length
+  1 <= m, n <= 104
+  1 <= m * n <= 104
+  -105 <= mat[i][j] <= 105
+
+Solution:
+  C:
+    /**
+     * Note: The returned array must be malloced, assume caller calls free().
+     */
+    int* findDiagonalOrder(int** mat, int matSize, int* matColSize, int* returnSize) {
+        int row, column;
+        *returnSize = matSize * matColSize[0];
+        int* ret = (int*)malloc(sizeof(int) * (*returnSize));
+        int p = 0;
+    
+        // 总共遍历m+n-1条对角线
+        for (int i = 0; i < matSize + matColSize[0] - 1; i++) {
+            // 遍历偶数对应的对角线时，向右上方遍历
+            if (i % 2 == 0) {
+                if (i < matSize) {
+                    column = 0;
+                    row = i;
+                }
+                else {
+                    column = i - matSize + 1;
+                    row = matSize - 1;
+                }
+                while (row >= 0 && column < matColSize[0]) {
+                    ret[p++] = mat[row][column];
+                    row--;
+                    column++;
+                }
+            }
+    
+            // 遍历奇数对应的对角线时，向左下方遍历
+            else {
+                if (i < matColSize[0]) {
+                    column = i;
+                    row = 0;
+                }
+                else {
+                    column = matColSize[0] - 1;
+                    row = i - matColSize[0] + 1;
+                }
+                while (row < matSize && column >= 0) {
+                    ret[p++] = mat[row][column];
+                    row++;
+                    column--;
+                }
+            }
+        }
+    
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> findDiagonalOrder(vector<vector<int>>& mat) {
+            int row, column;
+            vector<int> ret(mat.size() * mat[0].size());
+            int p = 0;
+    
+            // 总共遍历m+n-1条对角线
+            for (int i = 0; i < mat.size() + mat[0].size() - 1; i++) {
+                // 遍历偶数对应的对角线时，向右上方遍历
+                if (i % 2 == 0) {
+                    if (i < mat.size()) {
+                        column = 0;
+                        row = i;
+                    }
+                    else {
+                        column = i - mat.size() + 1;
+                        row = mat.size() - 1;
+                    }
+                    while (row >= 0 && column < mat[0].size()) {
+                        ret[p++] = mat[row][column];
+                        row--;
+                        column++;
+                    }
+                }
+    
+                // 遍历奇数对应的对角线时，向左下方遍历
+                else {
+                    if (i < mat[0].size()) {
+                        column = i;
+                        row = 0;
+                    }
+                    else {
+                        column = mat[0].size() - 1;
+                        row = i - mat[0].size() + 1;
+                    }
+                    while (row < mat.size() && column >= 0) {
+                        ret[p++] = mat[row][column];
+                        row++;
+                        column--;
+                    }
+                }
+            }
+    
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[] findDiagonalOrder(int[][] mat) {
+            int row, column;
+            int[] ret = new int[mat.length * mat[0].length];
+            int p = 0;
+    
+            // 总共遍历m+n-1条对角线
+            for (int i = 0; i < mat.length + mat[0].length - 1; i++) {
+                // 遍历偶数对应的对角线时，向右上方遍历
+                if (i % 2 == 0) {
+                    if (i < mat.length) {
+                        column = 0;
+                        row = i;
+                    }
+                    else {
+                        column = i - mat.length + 1;
+                        row = mat.length - 1;
+                    }
+                    while (row >= 0 && column < mat[0].length) {
+                        ret[p++] = mat[row][column];
+                        row--;
+                        column++;
+                    }
+                }
+    
+                // 遍历奇数对应的对角线时，向左下方遍历
+                else {
+                    if (i < mat[0].length) {
+                        column = i;
+                        row = 0;
+                    }
+                    else {
+                        column = mat[0].length - 1;
+                        row = i - mat[0].length + 1;
+                    }
+                    while (row < mat.length && column >= 0) {
+                        ret[p++] = mat[row][column];
+                        row++;
+                        column--;
+                    }
+                }
+            }
+    
+            return ret;
+        }
+    }
+
 来源：力扣（LeetCode）
 链接：https://leetcode.cn/leetbook/read/array-and-string/
