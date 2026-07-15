@@ -823,7 +823,6 @@ Solution:
 示例 2：
   输入：s = "cbbd"
   输出："bb"
- 
 
 提示：
   1 <= s.length <= 1000
@@ -893,6 +892,457 @@ Solution:
         free(radiuses);
     
         return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int expand(const string& s, int left, int right) {
+            while (left >= 0 && right < s.length() && s[left] == s[right]) {
+                left--;
+                right++;
+            }
+            return (right - left - 2) / 2;
+        }
+    
+        string longestPalindrome(string s) {
+            // 字符串预处理
+            string adapted(2 * s.length() + 1, '#');
+            for (int i = 0; i < s.length(); i++) adapted[2 * i + 1] = s[i];
+    
+            // 创建变量以及参数表
+            vector<int> radiuses(adapted.length());
+            int right = -1, center = -1, start = 0, end = -1;
+    
+            for (int i = 0; i < adapted.length(); i++) {
+                // 如果位于最右侧之内
+                if (i <= right) {
+                    int sym = 2 * center - i;
+                    int minRadius = std::min(right - i, radiuses[sym]);
+                    radiuses[i] = expand(adapted, i - minRadius, i + minRadius);
+                }
+                // 如果位于最右侧之外
+                else radiuses[i] = expand(adapted, i, i);
+    
+                // 更新最右侧
+                if (i + radiuses[i] > right) {
+                    center = i;
+                    right = i + radiuses[i];
+                }
+    
+                // 更新起止位置
+                if (2 * radiuses[i] + 1 > end - start) {
+                    end = i + radiuses[i];
+                    start = i - radiuses[i];
+                }
+            }
+    
+            // 返回最长子串
+            string ret = "";
+            for (int i = start; i <= end; i++) {
+                if (adapted[i] == '#') continue;
+                else ret += adapted[i];
+            }
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        private int expand(final char[] s, int left, int right) {
+            while (left >= 0 && right < s.length && s[left] == s[right]) {
+                left--;
+                right++;
+            }
+            return (right - left - 2) / 2;
+        }
+    
+        public String longestPalindrome(String s) {
+            // 字符串预处理
+            char[] charArray = s.toCharArray();
+            char[] adapted = new char[2 * s.length() + 1];
+            int p = 0;
+            for (int i = 0; i < adapted.length; i++) {
+                if (i % 2 == 0) adapted[i] = '#';
+                else adapted[i] = charArray[p++];
+            }
+    
+            // 创建变量以及参数表
+            int[] radiuses = new int[adapted.length];
+            int right = -1, center = -1, start = 0, end = -1;
+    
+            for (int i = 0; i < adapted.length; i++) {
+                // 如果位于最右侧之内
+                if (i <= right) {
+                    int sym = 2 * center - i;
+                    int minRadius = Math.min(right - i, radiuses[sym]);
+                    radiuses[i] = expand(adapted, i - minRadius, i + minRadius);
+                }
+                // 如果位于最右侧之外
+                else radiuses[i] = expand(adapted, i, i);
+    
+                // 更新最右侧
+                if (i + radiuses[i] > right) {
+                    center = i;
+                    right = i + radiuses[i];
+                }
+    
+                // 更新起止位置
+                if (2 * radiuses[i] + 1 > end - start) {
+                    end = i + radiuses[i];
+                    start = i - radiuses[i];
+                }
+            }
+    
+            // 返回最长子串
+            String ret = "";
+            for (int i = start; i <= end; i++) {
+                if (adapted[i] == '#') continue;
+                else ret += adapted[i];
+            }
+            return ret;
+        }
+    }
+
+
+9. 反转字符串里的单词    (151)
+
+给你一个字符串 s ，请你反转字符串中 单词 的顺序。
+
+单词 是由非空格字符组成的字符串。s 中使用至少一个空格将字符串中的 单词 分隔开。
+
+返回 单词 顺序颠倒且 单词 之间用单个空格连接的结果字符串。
+
+注意：输入字符串 s中可能会存在前导空格、尾随空格或者单词间的多个空格。返回的结果字符串中，单词间应当仅用单个空格分隔，且不包含任何额外的空格。
+
+
+示例 1：
+  输入：s = "the sky is blue"
+  输出："blue is sky the"
+
+示例 2：
+  输入：s = "  hello world  "
+  输出："world hello"
+  解释：反转后的字符串中不能存在前导空格和尾随空格。
+
+示例 3：
+  输入：s = "a good   example"
+  输出："example good a"
+  解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
+
+提示：
+  1 <= s.length <= 104
+  s 包含英文大小写字母、数字和空格 ' '
+  s 中 至少存在一个 单词
+ 
+进阶：如果字符串在你使用的编程语言中是一种可变数据类型，请尝试使用 O(1) 额外空间复杂度的 原地 解法。
+
+Solution:
+  C:
+    void reverse(char* s, int left, int right) {
+        while (left < right) {
+            char temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+    
+    char* reverseWords(char* s) {
+        // 先反转整个字符串
+        reverse(s, 0, strlen(s) - 1);
+    
+        // 去除前导空格和尾随空格
+        int left = 0, right = strlen(s) - 1;
+        while (s[left] == ' ') left++;
+        while (s[right] == ' ') right--;
+    
+        // 标记尾部索引
+        int end = right;
+        right = left;
+    
+        // 创建返回字符串
+        char* ret = (char*)malloc(sizeof(char) * (strlen(s) + 1));
+        int p = 0;
+    
+        while (right < end) {
+            if (s[right] != ' ') right++;
+            // 如果遇到空格，将单词反转后记录，将指针移动到下一个单词
+            else {
+                reverse(s, left, right-1);
+                while (left <= right) ret[p++] = s[left++];
+                while (s[right] == ' ') right++;
+                left = right;
+            }
+        }
+        
+        // 处理最后一个单词
+        reverse(s, left, right);
+        while (left <= right) ret[p++] = s[left++];
+        ret[p] = '\0';
+    
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        void reverse(string& s, int left, int right) {
+            while (left < right) {
+                char temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    
+        string reverseWords(string s) {
+            // 先反转整个字符串
+            reverse(s, 0, s.length()-1);
+    
+            // 去除前导空格和尾随空格
+            int left = 0;
+            while (s[left] == ' ') s.erase(left, 1);
+            int right = s.length() - 1;
+            while (s[right] == ' ') {
+                s.erase(right, 1);
+                right--;
+            }
+            right = left;
+    
+            while (right < s.length()) {
+                if (s[right] != ' ') right++;
+                // 如果遇到空格，将单词反转后记录，将指针移动到下一个单词
+                else {
+                    reverse(s, left, right-1);
+                    right++;
+                    while (s[right] == ' ') s.erase(right, 1);
+                    left = right;
+                }
+            }
+            
+            // 处理最后一个单词
+            reverse(s, left, right-1);
+    
+            return s;
+        }
+    };
+
+  Java:
+    class Solution {
+        private static void reverse(char[] s, int left, int right) {
+            while (left < right) {
+                char temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        
+        public String reverseWords(String s) {
+            // 先反转整个字符串
+            char[] charArray = s.toCharArray();
+            Solution.reverse(charArray, 0, charArray.length-1);
+    
+            // 去除前导空格和尾随空格
+            int left = 0, right = charArray.length - 1;
+            while (charArray[left] == ' ') left++;
+            while (charArray[right] == ' ') right--;
+    
+            // 标记尾部索引
+            int end = right;
+            right = left;
+    
+            // 创建返回字符串
+            String ret = "";
+    
+            while (right < end) {
+                if (charArray[right] != ' ') right++;
+                // 如果遇到空格，将单词反转后记录，将指针移动到下一个单词
+                else {
+                    Solution.reverse(charArray, left, right-1);
+                    while (left <= right) ret += charArray[left++];
+                    while (charArray[right] == ' ') right++;
+                    left = right;
+                }
+            }
+            
+            // 处理最后一个单词
+            Solution.reverse(charArray, left, right);
+            while (left <= right) ret += charArray[left++];
+    
+            return ret;
+        }
+    }
+
+
+10. 找出字符串中第一个匹配项的下标    (28)
+
+给你两个字符串 haystack 和 needle ，请你在 haystack 字符串中找出 needle 字符串的第一个匹配项的下标（下标从 0 开始）。如果 needle 不是 haystack 的一部分，则返回  -1 。
+
+
+示例 1：
+  输入：haystack = "sadbutsad", needle = "sad"
+  输出：0
+  解释："sad" 在下标 0 和 6 处匹配。
+  第一个匹配项的下标是 0 ，所以返回 0 。
+
+示例 2：
+  输入：haystack = "leetcode", needle = "leeto"
+  输出：-1
+  解释："leeto" 没有在 "leetcode" 中出现，所以返回 -1 。
+
+提示：
+  1 <= haystack.length, needle.length <= 104
+  haystack 和 needle 仅由小写英文字符组成
+
+Solution:
+  C:
+    int* createNext(char* needle) {
+        // 创建返回数组
+        int* next = (int*)malloc(sizeof(int) * strlen(needle));
+        next[0] = 0;
+
+        int left = 0, right = 1;
+        while (right < strlen(needle)) {
+            // 如果两个指针指向的内容相同，两个指针都后移
+            if (needle[left] == needle[right]) {
+                next[right] = left + 1;
+                left++;
+                right++;
+            }
+            else {
+                // 如果两个指针指向的内容不同且j指向开头，i处参数记为0，i往后移
+                if (left == 0) {
+                    next[right] = 0;
+                    right++;
+                }
+                // 如果两个指针指向的内容不同且j不指向开头，通过现有参数重新定位j
+                else left = next[left-1];
+            }
+        }
+        return next;
+    }
+    
+    int strStr(char* haystack, char* needle) {
+        int* next = createNext(needle);
+        int p1 = 0, p2 = 0;
+
+        while (p1 < strlen(haystack)) {
+            // 匹配的情况
+            if (haystack[p1] == needle[p2]) {
+                p1++;
+                p2++;
+                if (p2 == strlen(needle)) return p1 - strlen(needle);
+            }
+            // 不匹配的情况
+            else {
+                if (p2 == 0) p1++;
+                else p2 = next[p2-1];
+            }
+        }
+        return -1;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> createNext(string needle) {
+            vector<int> next(needle.length());
+            next[0] = 0;
+    
+            int left = 0, right = 1;
+            while (right < needle.length()) {
+                // 如果两个指针指向的内容相同，两个指针都后移
+                if (needle[left] == needle[right]) {
+                    next[right] = left + 1;
+                    left++;
+                    right++;
+                }
+                else {
+                    // 如果两个指针指向的内容不同且j指向开头，i处参数记为0，i往后移
+                    if (left == 0) {
+                        next[right] = 0;
+                        right++;
+                    }
+                    // 如果两个指针指向的内容不同且j不指向开头，通过现有参数重新定位j
+                    else left = next[left-1];
+                }
+            }
+            return next;
+        }
+    
+        int strStr(string haystack, string needle) {
+            vector<int> next = createNext(needle);
+            int p1 = 0, p2 = 0;
+    
+            while (p1 < haystack.length()) {
+                // 匹配的情况
+                if (haystack[p1] == needle[p2]) {
+                    p1++;
+                    p2++;
+                    if (p2 >= needle.length()) return p1 - needle.length();
+                }
+                // 不匹配的情况
+                else {
+                    if (p2 == 0) p1++;
+                    else p2 = next[p2-1];
+                }
+            }
+            return -1;
+        }
+    };
+
+  Java:
+    class Solution {
+        private int[] createNext(final char[] needle) {
+            int[] next = new int[needle.length];
+            next[0] = 0;
+    
+            int left = 0, right = 1;
+            while (right < needle.length) {
+                // 如果两个指针指向的内容相同，两个指针都后移
+                if (needle[left] == needle[right]) {
+                    next[right] = left + 1;
+                    left++;
+                    right++;
+                }
+                else {
+                    // 如果两个指针指向的内容不同且j指向开头，i处参数记为0，i往后移
+                    if (left == 0) {
+                        next[right] = 0;
+                        right++;
+                    }
+                    // 如果两个指针指向的内容不同且j不指向开头，通过现有参数重新定位j
+                    else left = next[left-1];
+                }
+            }
+            return next;
+        }
+    
+        public int strStr(String haystack, String needle) {
+            char[] charArray = needle.toCharArray();
+            int[] next = createNext(charArray);
+            int p1 = 0, p2 = 0;
+    
+            while (p1 < haystack.length()) {
+                // 匹配的情况
+                if (haystack.charAt(p1) == needle.charAt(p2)) {
+                    p1++;
+                    p2++;
+                    if (p2 >= needle.length()) return p1 - needle.length();
+                }
+                // 不匹配的情况
+                else {
+                    if (p2 == 0) p1++;
+                    else p2 = next[p2-1];
+                }
+            }
+            return -1;
+        }
     }
 
 来源：力扣（LeetCode）
