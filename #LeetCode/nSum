@@ -1,1 +1,244 @@
+1. 两数之和 II - 输入有序数组    (167)
 
+给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于目标数 target 的两个数。
+如果设这两个数分别是 numbers[index1] 和 numbers[index2] ，则 1 <= index1 < index2 <= numbers.length 。
+
+以长度为 2 的整数数组 [index1, index2] 的形式返回这两个整数的下标 index1 和 index2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。
+
+示例 1：
+  输入：numbers = [2,7,11,15], target = 9
+  输出：[1,2]
+  解释：2 与 7 之和等于目标数 9 。因此 index1 = 1, index2 = 2 。返回 [1, 2] 。
+
+提示：
+  2 <= numbers.length <= 3 * 104
+  -1000 <= numbers[i] <= 1000
+  numbers 按 非递减顺序 排列
+  -1000 <= target <= 1000
+  仅存在一个有效答案
+
+Solution:
+  C:
+    /**
+     * Note: The returned array must be malloced, assume caller calls free().
+     */
+    int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+        // 左右指针不断向中间逼近
+        int left = 0, right = numbersSize - 1;
+        while (left < right) {
+            if (numbers[left] + numbers[right] == target) break;
+            else if (numbers[left] + numbers[right] > target) right--;
+            else if (numbers[left] + numbers[right] < target) left++;
+        }
+    
+        // 如果有结果就返回下标对
+        if (left < right) {
+            *returnSize = 2;
+            int* ret = (int*)malloc(sizeof(int) * 2);
+            ret[0] = left + 1;
+            ret[1] = right + 1;
+            return ret;
+        }
+        else {
+            *returnSize = 0;
+            return NULL;
+        }
+    }
+
+
+2. 三数之和    (15)
+
+给你一个整数数组 nums ，判断是否存在三元组 [nums[i], nums[j], nums[k]] 满足 i != j、i != k 且 j != k ，
+同时还满足 nums[i] + nums[j] + nums[k] == 0 。请你返回所有和为 0 且不重复的三元组。
+
+注意：答案中不可以包含重复的三元组。
+
+示例 1：
+  输入：nums = [-1,0,1,2,-1,-4]
+  输出：[[-1,-1,2],[-1,0,1]]
+  解释：
+    nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0 。
+    nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0 。
+    nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0 。
+    不同的三元组是 [-1,0,1] 和 [-1,-1,2] 。
+    注意，输出的顺序和三元组的顺序并不重要。
+
+示例 2：
+  输入：nums = [0,1,1]
+  输出：[]
+  解释：唯一可能的三元组和不为 0 。
+
+提示：
+  3 <= nums.length <= 3000
+  -105 <= nums[i] <= 105
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int cmp(const void* a, const void* b) {
+        return *(int*)a - *(int*)b;
+    }
+    
+    int** getTwoSum(int* nums, int numsSize, int start, int target, int* returnSize) {
+        int** ret = (int**)malloc(sizeof(int*) * numsSize);
+        *returnSize = 0;
+    
+        // 左右指针查找
+        int left = start, right = numsSize - 1;
+        int mem;
+        while (left < right) {
+            if (nums[left] + nums[right] == target) {
+                ret[*returnSize] = (int*)malloc(sizeof(int) * 2);
+                ret[*returnSize][0] = nums[left];
+                ret[*returnSize][1] = nums[right];
+                (*returnSize)++;
+                mem = nums[right];
+                while(right >= 0 && nums[right] == mem) right--;
+                mem = nums[left];
+                while (left < numsSize && nums[left] == mem) left++;
+            }
+            else if (nums[left] + nums[right] < target) {
+                mem = nums[left];
+                while (left < numsSize && nums[left] == mem) left++;
+            }
+            else if (nums[left] + nums[right] > target) {
+                mem = nums[right];
+                while(right >= 0 && nums[right] == mem) right--;
+            }
+        }
+        return ret;
+    }
+    
+    int** threeSum(int* nums, int numsSize, int* returnSize, int** returnColumnSizes) {
+        // 先对所有的数进行排序
+        qsort(nums, numsSize, sizeof(int), cmp);
+        int** ret = (int**)malloc(sizeof(int*) * (numsSize * numsSize));
+        *returnSize = 0;
+        *returnColumnSizes = (int*)malloc(sizeof(int) * (numsSize * numsSize));
+    
+        // 先确定一个数，再寻找其他两个与其配对的
+        for (int i = 0; i < numsSize; ) {
+            int mem = nums[i];
+            int tuplesSize;
+            int** tuples = getTwoSum(nums, numsSize, i+1, -nums[i], &tuplesSize);
+            for (int j = 0; j < tuplesSize; j++) {
+                ret[*returnSize] = (int*)malloc(sizeof(int) * 3);
+                ret[*returnSize][0] = tuples[j][0];
+                ret[*returnSize][1] = tuples[j][1];
+                ret[*returnSize][2] = nums[i];
+                (*returnColumnSizes)[*returnSize] = 3;
+                (*returnSize)++;
+                free(tuples[j]);
+            }
+            free(tuples);
+            while (i < numsSize && nums[i] == mem) i++;
+        }
+        return ret;
+    }
+
+
+3. 四数之和    (18)
+
+给你一个由 n 个整数组成的数组 nums ，和一个目标值 target 。请你找出并返回满足下述全部条件且不重复的四元组
+[nums[a], nums[b], nums[c], nums[d]]（若两个四元组元素一一对应，则认为两个四元组重复）：
+  0 <= a, b, c, d < n
+  a、b、c 和 d 互不相同
+  nums[a] + nums[b] + nums[c] + nums[d] == target
+
+你可以按 任意顺序 返回答案 。
+
+示例 1：
+  输入：nums = [1,0,-1,0,-2,2], target = 0
+  输出：[[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+
+示例 2：
+  输入：nums = [2,2,2,2,2], target = 8
+  输出：[[2,2,2,2]]
+ 
+提示：
+  1 <= nums.length <= 200
+  -109 <= nums[i] <= 109
+  -109 <= target <= 109
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int cmp(const void* a, const void* b) {
+        return *(int*)a - *(int*)b;
+    }
+    
+    int** findNSum(int* nums, int numsSize, int n, int start, long target, int* returnSize, int** returnColumnSizes) {
+        int** ret = (int**)malloc(sizeof(int*) * (numsSize * numsSize));
+        *returnColumnSizes = (int*)malloc(sizeof(int) * (numsSize * numsSize));
+        *returnSize = 0;
+    
+        // n应该位于区间[2, numsSize]内
+        if (n < 2 || n > numsSize) return ret;
+    
+        // 如果n等于2，找到和为target的两数；否则执行递归
+        if (n == 2) {
+            int left = start, right = numsSize - 1;
+            int mem;
+            while (left < right) {
+                if (nums[left] + nums[right] == target) {
+                    ret[*returnSize] = (int*)malloc(sizeof(int) * 2);
+                    ret[*returnSize][0] = nums[left];
+                    ret[*returnSize][1] = nums[right];
+                    (*returnColumnSizes)[*returnSize] = 2;
+                    (*returnSize)++;
+                    mem = nums[left];
+                    while (left < right && nums[left] == mem) left++;
+                    mem = nums[right];
+                    while (left < right && nums[right] == mem) right--;
+                }
+                else if (nums[left] + nums[right] < target) {
+                    mem = nums[left];
+                    while (left < right && nums[left] == mem) left++;
+                }
+                else if (nums[left] + nums[right] > target) {
+                    mem = nums[right];
+                    while (left < right && nums[right] == mem) right--;
+                }
+            }
+        }
+        else {
+            for (int i = start; i < numsSize; i++) {
+                int tuplesSize;
+                int* tuplesColumnSizes;
+                int** tuples = findNSum(nums, numsSize, n-1, i+1, target-nums[i], &tuplesSize, &tuplesColumnSizes);
+                for (int j = 0; j < tuplesSize; j++) {
+                    ret[*returnSize] = (int*)malloc(sizeof(int) * (tuplesColumnSizes[0] + 1));
+                    for (int k = 0; k < tuplesColumnSizes[0]; k++) ret[*returnSize][k] = tuples[j][k];
+                    ret[*returnSize][tuplesColumnSizes[0]] = nums[i];
+                    (*returnColumnSizes)[*returnSize] = tuplesColumnSizes[0] + 1;
+                    (*returnSize)++;
+                    free(tuples[j]);
+                }
+                free(tuples);
+                free(tuplesColumnSizes);
+                while (i < numsSize - 1 && nums[i] == nums[i+1]) i++;
+            }
+        }
+        return ret;
+    }
+    
+    int** fourSum(int* nums, int numsSize, int target, int* returnSize, int** returnColumnSizes) {
+        // 先进行排序
+        qsort(nums, numsSize, sizeof(int), cmp);
+    
+        *returnSize = 0;
+        *returnColumnSizes = NULL;
+        return findNSum(nums, numsSize, 4, 0, target, returnSize, returnColumnSizes);
+    }
