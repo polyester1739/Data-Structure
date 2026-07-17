@@ -3,7 +3,7 @@
 #include <stdbool.h>
 
 typedef struct HashNode HashNode;
-typedef struct HashTable HashTable;
+typedef struct HashMap HashMap;
 
 struct HashNode {
     int key;
@@ -11,7 +11,7 @@ struct HashNode {
     HashNode* next;
 };
 
-struct HashTable {
+struct HashMap {
 	HashNode** buckets;
 	int size;
 	int capacity;
@@ -20,57 +20,57 @@ struct HashTable {
 const int INIT_CAPACITY = 6;
 
 int hashFunction(int capacity, int key);
-HashNode* initHashTable(int initCapacity);
-bool hashTableGet(HashTable* table, int key, int* result);
-void hashTablePut(HashTable* table, int key, int value);
-void hashTableRemove(HashTable* table, int key);
-void hashTableResize(HashTable* table, int newCapacity);
-void hashTableTraversal(HashTable* table);
-void hashTableDelete(HashTable* table);
+HashNode* initHashMap(int initCapacity);
+bool hashMapGet(HashMap* map, int key, int* result);
+void hashMapPut(HashMap* map, int key, int value);
+void hashMapRemove(HashMap* map, int key);
+void hashMapResize(HashMap* map, int newCapacity);
+void hashMapTraversal(HashMap* map);
+void hashMapDelete(HashMap* map);
 
 int main(int argc, const char* argv[]) {
-	HashTable* table = initHashTable(INIT_CAPACITY);
-	hashTablePut(table, 0, 10);
-	hashTablePut(table, 25, 20);
-	hashTablePut(table, 50, 30);
-	hashTablePut(table, 75, 40);
-	hashTablePut(table, 13, 50);
-	hashTablePut(table, 26, 60);
-	hashTablePut(table, 39, 70);
-	hashTablePut(table, 52, 80);
-	hashTableTraversal(table);
-	hashTableRemove(table, 25);
-	hashTableRemove(table, 50);
-	hashTableRemove(table, 13);
-	hashTableRemove(table, 39);
-	hashTableTraversal(table);
+	HashMap* map = initHashMap(INIT_CAPACITY);
+	hashMapPut(map, 0, 10);
+	hashMapPut(map, 25, 20);
+	hashMapPut(map, 50, 30);
+	hashMapPut(map, 75, 40);
+	hashMapPut(map, 13, 50);
+	hashMapPut(map, 26, 60);
+	hashMapPut(map, 39, 70);
+	hashMapPut(map, 52, 80);
+	hashMapTraversal(map);
+	hashMapRemove(map, 25);
+	hashMapRemove(map, 50);
+	hashMapRemove(map, 13);
+	hashMapRemove(map, 39);
+	hashMapTraversal(map);
 
 	int temp;
-	if (hashTableGet(table, 75, &temp)) printf("Key 75: %d\n", temp);
+	if (hashMapGet(map, 75, &temp)) printf("Key 75: %d\n", temp);
 	else printf("Key 75 not found.\n");
-	if (hashTableGet(table, 25, &temp)) printf("Key 25: %d\n", temp);
+	if (hashMapGet(map, 25, &temp)) printf("Key 25: %d\n", temp);
 	else printf("Key 25 not found.\n");
-	hashTableDelete(table);
+	hashMapDelete(map);
 }
 
 int hashFunction(int capacity, int key) {
 	return (key & 0x7FFFFFFF) % capacity;
 }
 
-HashNode* initHashTable(int initCapacity) {
-	HashTable* table = (HashTable*)malloc(sizeof(HashTable));
-	if (!table) exit(EXIT_FAILURE);
-	table->size = 0;
-	if (initCapacity <= 0) table->capacity = 1;
-	else table->capacity = initCapacity;
-	table->buckets = (HashNode**)calloc(table->capacity, sizeof(HashNode*));
-	if (!table->buckets) exit(EXIT_FAILURE);
-	return table;
+HashNode* initHashMap(int initCapacity) {
+	HashMap* map = (HashMap*)malloc(sizeof(HashMap));
+	if (!map) exit(EXIT_FAILURE);
+	map->size = 0;
+	if (initCapacity <= 0) map->capacity = 1;
+	else map->capacity = initCapacity;
+	map->buckets = (HashNode**)calloc(map->capacity, sizeof(HashNode*));
+	if (!map->buckets) exit(EXIT_FAILURE);
+	return map;
 }
 
-bool hashTableGet(HashTable* table, int key, int* result) {
-	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->buckets[index];
+bool hashMapGet(HashMap* map, int key, int* result) {
+	int index = hashFunction(map->capacity, key);
+	HashNode* current = map->buckets[index];
 	while (current != NULL) {
 		if (current->key == key) {
 			*result = current->value;
@@ -81,9 +81,9 @@ bool hashTableGet(HashTable* table, int key, int* result) {
 	return false; // Key not found
 }
 
-void hashTablePut(HashTable* table, int key, int value) {
-	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->buckets[index];
+void hashMapPut(HashMap* map, int key, int value) {
+	int index = hashFunction(map->capacity, key);
+	HashNode* current = map->buckets[index];
 	while (current != NULL) {
 		if (current->key == key) {
 			current->value = value;
@@ -95,27 +95,27 @@ void hashTablePut(HashTable* table, int key, int value) {
 	if (!newNode) exit(EXIT_FAILURE);
 	newNode->key = key;
 	newNode->value = value;
-	newNode->next = table->buckets[index];
-	table->buckets[index] = newNode;
-	table->size++;
+	newNode->next = map->buckets[index];
+	map->buckets[index] = newNode;
+	map->size++;
 
-	if (table->size > table->capacity * 0.75) {
-		hashTableResize(table, table->capacity * 2);
+	if (map->size > map->capacity * 0.75) {
+		hashMapResize(map, map->capacity * 2);
 	}
 }
 
-void hashTableRemove(HashTable* table, int key) {
-	int index = hashFunction(table->capacity, key);
-	HashNode* current = table->buckets[index];
+void hashMapRemove(HashMap* map, int key) {
+	int index = hashFunction(map->capacity, key);
+	HashNode* current = map->buckets[index];
 	HashNode* prev = NULL;
 	while (current != NULL) {
 		if (current->key == key) {
-			if (prev == NULL) table->buckets[index] = current->next;
+			if (prev == NULL) map->buckets[index] = current->next;
 			else prev->next = current->next;
 			free(current);
-			table->size--;
-			if (table->capacity > INIT_CAPACITY && table->size < table->capacity * 0.125) {
-				hashTableResize(table, table->capacity / 2);
+			map->size--;
+			if (map->capacity > INIT_CAPACITY && map->size < map->capacity * 0.125) {
+				hashMapResize(map, map->capacity / 2);
 			}
 			return;
 		}
@@ -124,13 +124,13 @@ void hashTableRemove(HashTable* table, int key) {
 	}
 }
 
-void hashTableResize(HashTable* table, int newCapacity) {
+void hashMapResize(HashMap* map, int newCapacity) {
 	if (newCapacity <= 0) newCapacity = 1;
 	HashNode** newBuckets = (HashNode**)calloc(newCapacity, sizeof(HashNode*));
 	if (!newBuckets) exit(EXIT_FAILURE);
 
-	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->buckets[i];
+	for (int i = 0; i < map->capacity; i++) {
+		HashNode* current = map->buckets[i];
 		while (current != NULL) {
 			HashNode* next = current->next;
 			int newIndex = hashFunction(newCapacity, current->key);
@@ -140,14 +140,14 @@ void hashTableResize(HashTable* table, int newCapacity) {
 		}
 	}
 
-	free(table->buckets);
-	table->buckets = newBuckets;
-	table->capacity = newCapacity;
+	free(map->buckets);
+	map->buckets = newBuckets;
+	map->capacity = newCapacity;
 }
 
-void hashTableTraversal(HashTable* table) {
-	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->buckets[i];
+void hashMapTraversal(HashMap* map) {
+	for (int i = 0; i < map->capacity; i++) {
+		HashNode* current = map->buckets[i];
 		while (current != NULL) {
 			printf("%d\t", current->value);
 			current = current->next;
@@ -156,15 +156,15 @@ void hashTableTraversal(HashTable* table) {
 	printf("\n");
 }
 
-void hashTableDelete(HashTable* table) {
-	for (int i = 0; i < table->capacity; i++) {
-		HashNode* current = table->buckets[i];
+void hashMapDelete(HashMap* map) {
+	for (int i = 0; i < map->capacity; i++) {
+		HashNode* current = map->buckets[i];
 		while (current != NULL) {
 			HashNode* next = current->next;
 			free(current);
 			current = next;
 		}
 	}
-	free(table->buckets);
-	free(table);
+	free(map->buckets);
+	free(map);
 }
