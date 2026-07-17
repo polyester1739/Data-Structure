@@ -1,1 +1,230 @@
+1. 区域和检索 - 数组不可变    (303)
 
+给定一个整数数组  nums，处理以下类型的多个查询:
+  1. 计算索引 left 和 right （包含 left 和 right）之间的 nums 元素的 和 ，其中 left <= right
+
+实现 NumArray 类：
+  NumArray(int[] nums) 使用数组 nums 初始化对象
+  int sumRange(int left, int right) 返回数组 nums 中索引 left 和 right 之间的元素的 总和，包含 left 和 right 两点（也就是 nums[left] + nums[left + 1] + ... + nums[right] )
+ 
+
+示例 1：
+  输入：
+    ["NumArray", "sumRange", "sumRange", "sumRange"]
+    [[[-2, 0, 3, -5, 2, -1]], [0, 2], [2, 5], [0, 5]]
+  输出：
+    [null, 1, -1, -3]
+  解释：
+    NumArray numArray = new NumArray([-2, 0, 3, -5, 2, -1]);
+    numArray.sumRange(0, 2); // return 1 ((-2) + 0 + 3)
+    numArray.sumRange(2, 5); // return -1 (3 + (-5) + 2 + (-1)) 
+    numArray.sumRange(0, 5); // return -3 ((-2) + 0 + 3 + (-5) + 2 + (-1))
+
+提示：
+  1 <= nums.length <= 10^4
+  -10^5 <= nums[i] <= 10^5
+  0 <= left <= right < nums.length
+  最多调用 10^4 次 sumRange 方法
+
+Solution:
+  C:
+    typedef struct {
+        int* presum;
+    } NumArray;
+    
+    NumArray* numArrayCreate(int* nums, int numsSize) {
+        NumArray* numArray = (NumArray*)malloc(sizeof(NumArray));
+        numArray->presum = (int*)malloc(sizeof(int) * (numsSize + 1));
+        numArray->presum[0] = 0;
+        for (int i = 0; i < numsSize; i++) numArray->presum[i+1] = numArray->presum[i] + nums[i];
+        return numArray;
+    }
+    
+    int numArraySumRange(NumArray* obj, int left, int right) {
+        return obj->presum[right+1] - obj->presum[left];
+    }
+    
+    void numArrayFree(NumArray* obj) {
+        free(obj->presum);
+        free(obj);
+    }
+    
+    /**
+     * Your NumArray struct will be instantiated and called as such:
+     * NumArray* obj = numArrayCreate(nums, numsSize);
+     * int param_1 = numArraySumRange(obj, left, right);
+     * numArrayFree(obj);
+     */
+
+  C++:
+    class NumArray {
+    public:
+        vector<int> numArray;
+    
+        NumArray(vector<int>& nums) {
+            numArray.resize(nums.size()+1);
+            for (int i = 0; i < nums.size(); i++) numArray[i+1] = numArray[i] + nums[i];
+        }
+        
+        int sumRange(int left, int right) {
+            return numArray[right+1] - numArray[left];
+        }
+    };
+    
+    /**
+     * Your NumArray object will be instantiated and called as such:
+     * NumArray* obj = new NumArray(nums);
+     * int param_1 = obj->sumRange(left,right);
+     */
+
+  Java:
+    class NumArray {
+        private int[] numArray;
+    
+        public NumArray(int[] nums) {
+            numArray = new int[nums.length+1];
+            for (int i = 0; i < nums.length; i++) numArray[i+1] = numArray[i] + nums[i];
+        }
+        
+        public int sumRange(int left, int right) {
+            return numArray[right+1] - numArray[left];
+        }
+    }
+    
+    /**
+     * Your NumArray object will be instantiated and called as such:
+     * NumArray obj = new NumArray(nums);
+     * int param_1 = obj.sumRange(left,right);
+     */
+
+
+2. 二维区域和检索 - 矩阵不可变    (304)
+
+给定一个二维矩阵 matrix，以下类型的多个请求：
+  计算其子矩形范围内元素的总和，该子矩阵的 左上角 为 (row1, col1) ，右下角 为 (row2, col2) 。
+
+实现 NumMatrix 类：
+  NumMatrix(int[][] matrix) 给定整数矩阵 matrix 进行初始化
+  int sumRegion(int row1, int col1, int row2, int col2) 返回 左上角 (row1, col1) 、右下角 (row2, col2) 所描述的子矩阵的元素 总和 。
+
+
+示例 1：
+  输入: 
+    ["NumMatrix","sumRegion","sumRegion","sumRegion"]
+    [[[[3,0,1,4,2],[5,6,3,2,1],[1,2,0,1,5],[4,1,0,1,7],[1,0,3,0,5]]],[2,1,4,3],[1,1,2,2],[1,2,2,4]]
+  输出: 
+    [null, 8, 11, 12]
+  解释:
+    NumMatrix numMatrix = new NumMatrix([[3,0,1,4,2],[5,6,3,2,1],[1,2,0,1,5],[4,1,0,1,7],[1,0,3,0,5]]);
+    numMatrix.sumRegion(2, 1, 4, 3); // return 8 (红色矩形框的元素总和)
+    numMatrix.sumRegion(1, 1, 2, 2); // return 11 (绿色矩形框的元素总和)
+    numMatrix.sumRegion(1, 2, 2, 4); // return 12 (蓝色矩形框的元素总和)
+
+提示：
+  m == matrix.length
+  n == matrix[i].length
+  1 <= m, n <= 200
+  -10^5 <= matrix[i][j] <= 10^5
+  0 <= row1 <= row2 < m
+  0 <= col1 <= col2 < n
+  最多调用 10^4 次 sumRegion 方法
+
+Solution:
+  C:
+    typedef struct {
+        int** presum;
+        int rowSize;
+    } NumMatrix;
+    
+    NumMatrix* numMatrixCreate(int** matrix, int matrixSize, int* matrixColSize) {
+        // 为二维前缀和数组分配内存
+        NumMatrix* numMatrix = (NumMatrix*)malloc(sizeof(NumMatrix));
+        numMatrix->presum = (int**)calloc(matrixSize+1, sizeof(int*));
+        numMatrix->rowSize = matrixSize + 1;
+        for (int i = 0; i < matrixSize+1; i++) numMatrix->presum[i] = (int*)calloc(matrixColSize[0]+1, sizeof(int));
+    
+        // 填充二维前缀和数组
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixColSize[0]; j++) {
+                numMatrix->presum[i+1][j+1] = numMatrix->presum[i][j+1] + numMatrix->presum[i+1][j] + matrix[i][j] - numMatrix->presum[i][j];
+            }
+        }
+    
+        return numMatrix;
+    }
+    
+    int numMatrixSumRegion(NumMatrix* obj, int row1, int col1, int row2, int col2) {
+        // 框中元素总和 = 矩阵左上角到选框右下角的元素总和 - 矩阵左上角到选框左下角的元素总和 - 矩阵左上角到选框右上角的元素总和 + 矩阵左上角到选框左上角的元素总和
+        return obj->presum[row2+1][col2+1] - obj->presum[row2+1][col1] - obj->presum[row1][col2+1] + obj->presum[row1][col1];
+    }
+    
+    void numMatrixFree(NumMatrix* obj) {
+        for (int i = 0; i < obj->rowSize; i++) free(obj->presum[i]);
+        free(obj->presum);
+        free(obj);
+    }
+    
+    /**
+     * Your NumMatrix struct will be instantiated and called as such:
+     * NumMatrix* obj = numMatrixCreate(matrix, matrixSize, matrixColSize);
+     * int param_1 = numMatrixSumRegion(obj, row1, col1, row2, col2);
+     * numMatrixFree(obj);
+    */
+
+  C++:
+    class NumMatrix {
+    public:
+        vector<vector<int>> presum;
+    
+        NumMatrix(vector<vector<int>>& matrix) {
+            // 建立二维前缀和数组
+            presum.resize(matrix.size()+1);
+            for (int i = 0; i < presum.size(); i++) presum[i].resize(matrix[0].size()+1);
+    
+            // 填充二维前缀和数组
+            for (int i = 0; i < matrix.size(); i++) {
+                for (int j = 0; j < matrix[0].size(); j++) {
+                    presum[i+1][j+1] = presum[i+1][j] + presum[i][j+1] + matrix[i][j] - presum[i][j];
+                }
+            }
+        }
+        
+        int sumRegion(int row1, int col1, int row2, int col2) {
+            // 框中元素总和 = 矩阵左上角到选框右下角的元素总和 - 矩阵左上角到选框左下角的元素总和 - 矩阵左上角到选框右上角的元素总和 + 矩阵左上角到选框左上角的元素总和
+            return presum[row2+1][col2+1] - presum[row2+1][col1] - presum[row1][col2+1] + presum[row1][col1];
+        }
+    };
+    
+    /**
+     * Your NumMatrix object will be instantiated and called as such:
+     * NumMatrix* obj = new NumMatrix(matrix);
+     * int param_1 = obj->sumRegion(row1,col1,row2,col2);
+     */
+
+  Java:
+    class NumMatrix {
+        private int[][] presum;
+    
+        public NumMatrix(int[][] matrix) {
+            // 建立二维前缀和数组
+            presum = new int[matrix.length+1][matrix[0].length+1];
+    
+            // 填充二维前缀和数组
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[0].length; j++) {
+                    presum[i+1][j+1] = presum[i+1][j] + presum[i][j+1] + matrix[i][j] - presum[i][j];
+                }
+            }
+        }
+        
+        public int sumRegion(int row1, int col1, int row2, int col2) {
+            // 框中元素总和 = 矩阵左上角到选框右下角的元素总和 - 矩阵左上角到选框左下角的元素总和 - 矩阵左上角到选框右上角的元素总和 + 矩阵左上角到选框左上角的元素总和
+            return presum[row2+1][col2+1] - presum[row2+1][col1] - presum[row1][col2+1] + presum[row1][col1];
+        }
+    }
+    
+    /**
+     * Your NumMatrix object will be instantiated and called as such:
+     * NumMatrix obj = new NumMatrix(matrix);
+     * int param_1 = obj.sumRegion(row1,col1,row2,col2);
+     */
