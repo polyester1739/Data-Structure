@@ -1345,5 +1345,582 @@ Solution:
         }
     }
 
+11. 反转字符串    (344)
+
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+
+示例 1：
+  输入：s = ["h","e","l","l","o"]
+  输出：["o","l","l","e","h"]
+
+示例 2：
+  输入：s = ["H","a","n","n","a","h"]
+  输出：["h","a","n","n","a","H"]
+
+提示：
+  1 <= s.length <= 10^5
+  s[i] 都是 ASCII 码表中的可打印字符
+
+Solution:
+  C:
+    void reverseString(char* s, int sSize) {
+        // 设置左右指针
+        int left = 0, right = sSize - 1;
+    
+        // 左右指针往中间碰，不断将对应索引处的字符进行交换
+        char temp;
+        while (left < right) {
+            temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+  C++:
+    class Solution {
+    public:
+        void reverseString(vector<char>& s) {
+            // 设置左右指针
+            int left = 0, right = s.size() - 1;
+    
+            // 左右指针往中间碰，不断将对应索引处的字符进行交换
+            char temp;
+            while (left < right) {
+                temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    };
+
+  Java:
+    class Solution {
+        public void reverseString(char[] s) {
+            // 设置左右指针
+            int left = 0, right = s.length - 1;
+    
+            // 左右指针往中间碰，不断将对应索引处的字符进行交换
+            char temp;
+            while (left < right) {
+                temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    }
+
+
+12. 数组拆分    (561)
+
+给定长度为 2n 的整数数组 nums ，你的任务是将这些数分成 n 对, 例如 (a_1, b_1), (a_2, b_2), ..., (a_n, b_n) ，使得从 1 到 n 的 min(a_i, b_i) 总和最大。
+返回该 最大总和 。
+
+
+示例 1：
+  输入：nums = [1,4,3,2]
+  输出：4
+  解释：
+    所有可能的分法（忽略元素顺序）为：
+    1. (1, 4), (2, 3) -> min(1, 4) + min(2, 3) = 1 + 2 = 3
+    2. (1, 3), (2, 4) -> min(1, 3) + min(2, 4) = 1 + 2 = 3
+    3. (1, 2), (3, 4) -> min(1, 2) + min(3, 4) = 1 + 3 = 4
+    所以最大总和为 4
+
+示例 2：
+  输入：nums = [6,2,6,5,1,2]
+  输出：9
+  解释：最优的分法为 (2, 1), (2, 5), (6, 6). min(2, 1) + min(2, 5) + min(6, 6) = 1 + 2 + 6 = 9
+
+提示：
+  1 <= n <= 10^4
+  nums.length == 2 * n
+  -10^4 <= nums[i] <= 10^4
+
+Solution:
+  C:
+    int cmp(const void* a, const void* b) {
+        return *(int*)a - *(int*)b; 
+    }
+    
+    int arrayPairSum(int* nums, int numsSize) {
+        // 从小到大排序
+        qsort(nums, numsSize, sizeof(int), cmp);
+        int p = 0;
+        int ret = 0;
+    
+        // 通过while循环完成遍历
+        while (p < numsSize) {
+            ret += nums[p];
+            p += 2;
+        }
+    
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int arrayPairSum(vector<int>& nums) {
+            // 从小到大排序
+            sort(nums.begin(), nums.end());
+            int p = 0;
+            int ret = 0;
+    
+            // 通过while循环完成遍历
+            while (p < nums.size()) {
+                ret += nums[p];
+                p += 2;
+            }
+    
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int arrayPairSum(int[] nums) {
+            // 从小到大排序
+            Arrays.sort(nums);
+            int p = 0;
+            int ret = 0;
+    
+            // 通过while循环完成遍历
+            while (p < nums.length) {
+                ret += nums[p];
+                p += 2;
+            }
+    
+            return ret;
+        }
+    }
+
+
+13. 两数之和 II - 输入有序数组    (167)
+
+给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于目标数 target 的两个数。
+
+如果设这两个数分别是 numbers[index_1] 和 numbers[index_2] ，则 1 <= index_1 < index_2 <= numbers.length 。
+以长度为 2 的整数数组 [index_1, index_2] 的形式返回这两个整数的下标 index_1 和 index_2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。
+
+
+示例 1：
+  输入：numbers = [2,7,11,15], target = 9
+  输出：[1,2]
+  解释：2 与 7 之和等于目标数 9 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+示例 2：
+  输入：numbers = [2,3,4], target = 6
+  输出：[1,3]
+  解释：2 与 4 之和等于目标数 6 。因此 index_1 = 1, index_2 = 3 。返回 [1, 3] 。
+
+示例 3：
+  输入：numbers = [-1,0], target = -1
+  输出：[1,2]
+  解释：-1 与 0 之和等于目标数 -1 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+提示：
+  2 <= numbers.length <= 3 * 10^4
+  -1000 <= numbers[i] <= 1000
+  numbers 按 非递减顺序 排列
+  -1000 <= target <= 1000
+  仅存在一个有效答案
+
+Solution:
+  C:
+    int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+        // 左右指针不断向中间逼近
+        int left = 0, right = numbersSize - 1;
+        int mem;
+    
+        while (left < right) {
+            if (numbers[left] + numbers[right] == target) break;
+            else if (numbers[left] + numbers[right] < target) {
+                mem = numbers[left];
+                while (left < right && numbers[left] == mem) left++;
+            }
+            else if (numbers[left] + numbers[right] > target) {
+                mem = numbers[right];
+                while (left < right && numbers[right] == mem) right--;
+            }
+        }
+    
+        // 如果有结果就返回下标对
+        if (left < right) {
+            *returnSize = 2;
+            int* ret = (int*)malloc(sizeof(int) * 2);
+            ret[0] = left + 1;
+            ret[1] = right + 1;
+            return ret;
+        }
+        else {
+            *returnSize = 0;
+            return NULL;
+        }
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> twoSum(vector<int>& numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.size() - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    vector<int> ret(2);
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            vector<int> ret(0);
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[] twoSum(int[] numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.length - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    int[] ret = new int[2];
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            return new int[0];
+        }
+    }
+
+
+14. 移除元素    (27)
+
+给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素。元素的顺序可能发生改变。然后返回 nums 中与 val 不同的元素的数量。
+
+假设 nums 中不等于 val 的元素数量为 k，要通过此题，您需要执行以下操作：
+
+更改 nums 数组，使 nums 的前 k 个元素包含不等于 val 的元素。nums 的其余元素和 nums 的大小并不重要。
+返回 k。
+
+用户评测：
+
+评测机将使用以下代码测试您的解决方案：
+  int[] nums = [...]; // 输入数组
+  int val = ...; // 要移除的值
+  int[] expectedNums = [...]; // 长度正确的预期答案。
+                              // 它以不等于 val 的值排序。
+  int k = removeElement(nums, val); // 调用你的实现
+  assert k == expectedNums.length;
+  sort(nums, 0, k); // 排序 nums 的前 k 个元素
+  for (int i = 0; i < k; i++) {
+      assert nums[i] == expectedNums[i];
+  }
+如果所有的断言都通过，你的解决方案将会 通过。
+
+示例 1：
+  输入：nums = [3,2,2,3], val = 3
+  输出：2, nums = [2,2,_,_]
+  解释：你的函数应该返回 k = 2, 并且 nums 中的前两个元素均为 2。
+  你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+示例 2：
+  输入：nums = [0,1,2,2,3,0,4,2], val = 2
+  输出：5, nums = [0,1,4,0,3,_,_,_]
+  解释：你的函数应该返回 k = 5，并且 nums 中的前五个元素为 0,0,1,3,4。
+  注意这五个元素可以任意顺序返回。你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+提示：
+  0 <= nums.length <= 100
+  0 <= nums[i] <= 50
+  0 <= val <= 100
+
+Solution:
+  C:
+    int removeElement(int* nums, int numsSize, int val) {
+        // 设置快慢指针
+        int slow = 0, fast = 0;
+        int k = 0;
+    
+        // 快指针用于读取内容，慢指针用于将内容写入数组
+        while (fast < numsSize) {
+            if (nums[fast] == val) fast++;
+            else {
+                nums[slow] = nums[fast];
+                fast++;
+                slow++;
+                k++;
+            }
+        }
+        return k;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int removeElement(vector<int>& nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.size()) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int removeElement(int[] nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.length) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    }
+
+
+15. 最大连续 1 的个数    (485)
+
+给定一个二进制数组 nums ， 计算其中最大连续 1 的个数。
+
+
+示例 1：
+  输入：nums = [1,1,0,1,1,1]
+  输出：3
+  解释：开头的两位和最后的三位都是连续 1 ，所以最大连续 1 的个数是 3.
+
+示例 2:
+  输入：nums = [1,0,1,1,0,1]
+  输出：2
+
+提示：
+  1 <= nums.length <= 10^5
+  nums[i] 不是 0 就是 1.
+
+Solution:
+  C:
+    int findMaxConsecutiveOnes(int* nums, int numsSize) {
+        // 设置计数器
+        int cnt = 0;
+        int max = 0;
+    
+        // 遍历数组，出现1进行累加，出现0更新最大值
+        for (int i = 0; i < numsSize; i++) {
+            if (nums[i] == 0) {
+                if (cnt > max) max = cnt;
+                cnt = 0;
+            }
+            else cnt++;
+        }
+        if (cnt > max) max = cnt;
+    
+        return max;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int findMaxConsecutiveOnes(vector<int>& nums) {
+            // 设置计数器
+            int cnt = 0;
+            int max = 0;
+    
+            // 遍历数组，出现1进行累加，出现0更新最大值
+            for (int i = 0; i < nums.size(); i++) {
+                if (nums[i] == 0) {
+                    if (cnt > max) max = cnt;
+                    cnt = 0;
+                }
+                else cnt++;
+            }
+            if (cnt > max) max = cnt;
+    
+            return max;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int findMaxConsecutiveOnes(int[] nums) {
+            // 设置计数器
+            int cnt = 0;
+            int max = 0;
+    
+            // 遍历数组，出现1进行累加，出现0更新最大值
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] == 0) {
+                    if (cnt > max) max = cnt;
+                    cnt = 0;
+                }
+                else cnt++;
+            }
+            if (cnt > max) max = cnt;
+    
+            return max;
+        }
+    }
+
+
+16. 长度最小的子数组    (209)
+
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其总和大于等于 target 的长度最小的 子数组 [nums_l, nums_l+1, ..., nums_r-1, nums_r] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+
+示例 1：
+  输入：target = 7, nums = [2,3,1,2,4,3]
+  输出：2
+  解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+
+示例 2：
+  输入：target = 4, nums = [1,4,4]
+  输出：1
+
+示例 3：
+  输入：target = 11, nums = [1,1,1,1,1,1,1,1]
+  输出：0
+
+提示：
+  1 <= target <= 10^9
+  1 <= nums.length <= 10^5
+  1 <= nums[i] <= 10^4
+
+进阶：
+  如果你已经实现 O(n) 时间复杂度的解法, 请尝试设计一个 O(n log(n)) 时间复杂度的解法。
+
+Solution:
+  C:
+    int minSubArrayLen(int target, int* nums, int numsSize) {
+        // 设置左右指针
+        int left = 0, right = 0;
+        int sum = 0;
+        int length = INT_MAX;
+    
+        while (right < numsSize) {
+            sum += nums[right++];
+    
+            // 如果总和大于等于target，记录窗口长度，缩小窗口
+            while (sum >= target) {
+                if (right - left < length) length = right - left;
+                sum -= nums[left++];
+            }
+        }
+    
+        if (length == INT_MAX) return 0;
+        else return length;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int minSubArrayLen(int target, vector<int>& nums) {
+            // 设置左右指针
+            int left = 0, right = 0;
+            int sum = 0;
+            int length = INT_MAX;
+    
+            while (right < nums.size()) {
+                sum += nums[right++];
+    
+                // 如果总和大于等于target，记录窗口长度，缩小窗口
+                while (sum >= target) {
+                    if (right - left < length) length = right - left;
+                    sum -= nums[left++];
+                }
+            }
+    
+            if (length == INT_MAX) return 0;
+            else return length;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int minSubArrayLen(int target, int[] nums) {
+            // 设置左右指针
+            int left = 0, right = 0;
+            int sum = 0;
+            int length = Integer.MAX_VALUE;
+    
+            while (right < nums.length) {
+                sum += nums[right++];
+    
+                // 如果总和大于等于target，记录窗口长度，缩小窗口
+                while (sum >= target) {
+                    if (right - left < length) length = right - left;
+                    sum -= nums[left++];
+                }
+            }
+    
+            if (length == Integer.MAX_VALUE) return 0;
+            else return length;
+        }
+    }
+
+
+17.
+
+
 来源：力扣（LeetCode）
 链接：https://leetcode.cn/leetbook/read/array-and-string/
