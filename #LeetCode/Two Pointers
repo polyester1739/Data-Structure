@@ -1338,3 +1338,441 @@ Solution:
             return pA;
         }
     }
+
+
+12. 删除有序数组中的重复项 II    (80)
+
+给你一个有序数组 nums ，请你 原地 删除重复出现的元素，使得出现次数超过两次的元素只出现两次 ，返回删除后数组的新长度。
+
+不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+
+
+说明：
+  为什么返回数值是整数，但输出的答案是数组呢？
+
+  请注意，输入数组是以「引用」方式传递的，这意味着在函数里修改输入数组对于调用者是可见的。
+  
+  你可以想象内部操作如下:
+    // nums 是以“引用”方式传递的。也就是说，不对实参做任何拷贝
+    int len = removeDuplicates(nums);
+    // 在函数里修改输入数组对于调用者是可见的。
+    // 根据你的函数返回的长度, 它会打印出数组中 该长度范围内 的所有元素。
+    for (int i = 0; i < len; i++) {
+        print(nums[i]);
+    }
+
+示例 1：
+  输入：nums = [1,1,1,2,2,3]
+  输出：5, nums = [1,1,2,2,3]
+  解释：函数应返回新长度 length = 5, 并且原数组的前五个元素被修改为 1, 1, 2, 2, 3。 不需要考虑数组中超出新长度后面的元素。
+
+示例 2：
+  输入：nums = [0,0,1,1,1,1,2,3,3]
+  输出：7, nums = [0,0,1,1,2,3,3]
+  解释：函数应返回新长度 length = 7, 并且原数组的前七个元素被修改为 0, 0, 1, 1, 2, 3, 3。不需要考虑数组中超出新长度后面的元素。
+
+提示：
+  1 <= nums.length <= 3 * 10^4
+  -10^4 <= nums[i] <= 10^4
+  nums 已按升序排列
+
+Solution:
+  C:
+    int removeDuplicates(int* nums, int numsSize) {
+        // 设置快慢指针，快指针用于读取，慢指针用于写入
+        int fast = 0, slow = 0;
+        int mem;
+        int length = 0;
+    
+        while (fast < numsSize) {
+            // 如果有两个连续相同的，写入两个
+            if (fast < numsSize-1 && nums[fast] == nums[fast+1]) {
+                for (int i = 0; i < 2; i++) {
+                    nums[slow++] = nums[fast];
+                    length++;
+                }
+            }
+            else {
+                nums[slow++] = nums[fast];
+                length++;
+            }
+    
+            mem = nums[fast];
+            while (fast < numsSize && nums[fast] == mem) fast++;
+        }
+        return length;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int removeDuplicates(vector<int>& nums) {
+            // 设置快慢指针，快指针用于读取，慢指针用于写入
+            int fast = 0, slow = 0;
+            int mem;
+            int length = 0;
+    
+            while (fast < nums.size()) {
+                // 如果有两个连续相同的，写入两个
+                if (fast < nums.size()-1 && nums[fast] == nums[fast+1]) {
+                    for (int i = 0; i < 2; i++) {
+                        nums[slow++] = nums[fast];
+                        length++;
+                    }
+                }
+                else {
+                    nums[slow++] = nums[fast];
+                    length++;
+                }
+    
+                mem = nums[fast];
+                while (fast < nums.size() && nums[fast] == mem) fast++;
+            }
+            return length;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int removeDuplicates(int[] nums) {
+            // 设置快慢指针，快指针用于读取，慢指针用于写入
+            int fast = 0, slow = 0;
+            int mem;
+            int length = 0;
+    
+            while (fast < nums.length) {
+                // 如果有两个连续相同的，写入两个
+                if (fast < nums.length-1 && nums[fast] == nums[fast+1]) {
+                    for (int i = 0; i < 2; i++) {
+                        nums[slow++] = nums[fast];
+                        length++;
+                    }
+                }
+                else {
+                    nums[slow++] = nums[fast];
+                    length++;
+                }
+    
+                mem = nums[fast];
+                while (fast < nums.length && nums[fast] == mem) fast++;
+            }
+            return length;
+        }
+    }
+
+
+13. 验证回文串    (125)
+
+如果在将所有大写字符转换为小写字符、并移除所有非字母数字字符之后，短语正着读和反着读都一样。则可以认为该短语是一个 回文串 。
+
+字母和数字都属于字母数字字符。
+
+给你一个字符串 s，如果它是 回文串 ，返回 true ；否则，返回 false 。
+
+示例 1：
+  输入: s = "A man, a plan, a canal: Panama"
+  输出：true
+  解释："amanaplanacanalpanama" 是回文串。
+
+示例 2：
+  输入：s = "race a car"
+  输出：false
+  解释："raceacar" 不是回文串。
+
+示例 3：
+  输入：s = " "
+  输出：true
+  解释：在移除非字母数字字符之后，s 是一个空字符串 "" 。由于空字符串正着反着读都一样，所以是回文串。
+
+提示：
+  1 <= s.length <= 2 * 10^5
+  s 仅由可打印的 ASCII 字符组成
+
+Solution:
+  C:
+    bool isPalindrome(char* s) {
+        // 字符串处理
+        char* adapted = (char*)malloc(sizeof(char) * (strlen(s) + 1));
+        int p = 0;
+        for (int i = 0; i < strlen(s); i++) {
+            if (s[i] >= 'a' && s[i] <= 'z') adapted[p++] = s[i];
+            else if (s[i] >= '0' && s[i] <= '9') adapted[p++] = s[i];
+            else if (s[i] >= 'A' && s[i] <= 'Z') adapted[p++] = s[i] + 32;
+            else continue;
+        }
+        adapted[p] = '\0';
+    
+        // 设置左右指针
+        int left = 0, right = strlen(adapted) - 1;
+        while (left < right) {
+            if (adapted[left] != adapted[right]) return false;
+            left++;
+            right--;
+        }
+        free(adapted);
+        return true;
+    }
+
+  C++:
+    class Solution {
+    public:
+        bool isPalindrome(string s) {
+            // 字符串处理
+            string adapted = "";
+            for (int i = 0; i < s.size(); i++) {
+                if (s[i] >= 'a' && s[i] <= 'z') adapted += s[i];
+                else if (s[i] >= '0' && s[i] <= '9') adapted += s[i];
+                else if (s[i] >= 'A' && s[i] <= 'Z') adapted += (char)(s[i] + 32);
+                else continue;
+            }
+    
+            // 设置左右指针
+            int left = 0, right = adapted.size() - 1;
+            while (left < right) {
+                if (adapted[left] != adapted[right]) return false;
+                left++;
+                right--;
+            }
+            return true;
+        }
+    };
+
+  Java:
+    class Solution {
+        public boolean isPalindrome(String s) {
+            // 字符串处理
+            String adapted = "";
+            for (int i = 0; i < s.length(); i++) {
+                if (s.charAt(i) >= 'a' && s.charAt(i) <= 'z') adapted += s.charAt(i);
+                else if (s.charAt(i) >= '0' && s.charAt(i) <= '9') adapted += s.charAt(i);
+                else if (s.charAt(i) >= 'A' && s.charAt(i) <= 'Z') adapted += (char)(s.charAt(i) + 32);
+                else continue;
+            }
+    
+            // 设置左右指针
+            int left = 0, right = adapted.length() - 1;
+            while (left < right) {
+                if (adapted.charAt(left) != adapted.charAt(right)) return false;
+                left++;
+                right--;
+            }
+            return true;
+        }
+    }
+
+
+14. 颜色分类    (75)
+
+给定一个包含红色、白色和蓝色、共 n 个元素的数组 nums ，原地 对它们进行排序，使得相同颜色的元素相邻，并按照红色、白色、蓝色顺序排列。
+
+我们使用整数 0、 1 和 2 分别表示红色、白色和蓝色。
+
+必须在不使用库内置的 sort 函数的情况下解决这个问题。
+
+
+示例 1：
+  输入：nums = [2,0,2,1,1,0]
+  输出：[0,0,1,1,2,2]
+
+示例 2：
+  输入：nums = [2,0,1]
+  输出：[0,1,2]
+
+提示：
+  n == nums.length
+  1 <= n <= 300
+  nums[i] 为 0、1 或 2
+
+进阶：你能想出一个仅使用常数空间的一趟扫描算法吗？
+
+Solution:
+  C:
+
+15. 合并两个有序数组    (88)
+
+给你两个按 非递减顺序 排列的整数数组 nums1 和 nums2，另有两个整数 m 和 n ，分别表示 nums1 和 nums2 中的元素数目。
+
+请你 合并 nums2 到 nums1 中，使合并后的数组同样按 非递减顺序 排列。
+
+注意：最终，合并后数组不应由函数返回，而是存储在数组 nums1 中。为了应对这种情况，nums1 的初始长度为 m + n，
+其中前 m 个元素表示应合并的元素，后 n 个元素为 0 ，应忽略。nums2 的长度为 n 。
+
+
+示例 1：
+  输入：nums1 = [1,2,3,0,0,0], m = 3, nums2 = [2,5,6], n = 3
+  输出：[1,2,2,3,5,6]
+  解释：需要合并 [1,2,3] 和 [2,5,6] 。合并结果是 [1,2,2,3,5,6]。
+
+示例 2：
+  输入：nums1 = [1], m = 1, nums2 = [], n = 0
+  输出：[1]
+  解释：需要合并 [1] 和 [] 。合并结果是 [1] 。
+
+示例 3：
+  输入：nums1 = [0], m = 0, nums2 = [1], n = 1
+  输出：[1]
+  解释：
+    需要合并的数组是 [] 和 [1] 。合并结果是 [1] 。
+    注意，因为 m = 0 ，所以 nums1 中没有元素。nums1 中仅存的 0 仅仅是为了确保合并结果可以顺利存放到 nums1 中。
+
+提示：
+  nums1.length == m + n
+  nums2.length == n
+  0 <= m, n <= 200
+  1 <= m + n <= 200
+  -10^9 <= nums1[i], nums2[j] <= 10^9
+
+进阶：你可以设计实现一个时间复杂度为 O(m + n) 的算法解决此问题吗？
+
+Solution:
+  C:
+    void merge(int* nums1, int nums1Size, int m, int* nums2, int nums2Size, int n) {
+        // 在两个数组的尾部设置指针
+        int p1 = m - 1, p2 = n - 1;
+        int p = nums1Size - 1;
+    
+        // 自后向前合并
+        while (p1 >= 0 && p2 >= 0) {
+            if (nums1[p1] <= nums2[p2]) nums1[p--] = nums2[p2--];
+            else nums1[p--] = nums1[p1--];
+        }
+        if (p1 >= 0) while (p1 >= 0) nums1[p--] = nums1[p1--];
+        else while (p2 >= 0) nums1[p--] = nums2[p2--];
+    }
+
+  C++:
+    class Solution {
+    public:
+        void merge(vector<int>& nums1, int m, vector<int>& nums2, int n) {
+            // 在两个数组的尾部设置指针
+            int p1 = m - 1, p2 = n - 1;
+            int p = nums1.size() - 1;
+    
+            // 自后向前合并
+            while (p1 >= 0 && p2 >= 0) {
+                if (nums1[p1] <= nums2[p2]) nums1[p--] = nums2[p2--];
+                else nums1[p--] = nums1[p1--];
+            }
+            if (p1 >= 0) while (p1 >= 0) nums1[p--] = nums1[p1--];
+            else while (p2 >= 0) nums1[p--] = nums2[p2--];
+        }
+    };
+
+  Java:
+    class Solution {
+        public void merge(int[] nums1, int m, int[] nums2, int n) {
+            // 在两个数组的尾部设置指针
+            int p1 = m - 1, p2 = n - 1;
+            int p = nums1.length - 1;
+    
+            // 自后向前合并
+            while (p1 >= 0 && p2 >= 0) {
+                if (nums1[p1] <= nums2[p2]) nums1[p--] = nums2[p2--];
+                else nums1[p--] = nums1[p1--];
+            }
+            if (p1 >= 0) while (p1 >= 0) nums1[p--] = nums1[p1--];
+            else while (p2 >= 0) nums1[p--] = nums2[p2--];
+        }
+    }
+
+
+16. 有序数组的平方    (977)
+
+给你一个按 非递减顺序 排序的整数数组 nums，返回 每个数字的平方 组成的新数组，要求也按 非递减顺序 排序。
+
+
+示例 1：
+  输入：nums = [-4,-1,0,3,10]
+  输出：[0,1,9,16,100]
+  解释：
+    平方后，数组变为 [16,1,0,9,100]
+    排序后，数组变为 [0,1,9,16,100]
+
+示例 2：
+  输入：nums = [-7,-3,2,3,11]
+  输出：[4,9,9,49,121]
+
+提示：
+  1 <= nums.length <= 10^4
+  -10^4 <= nums[i] <= 10^4
+  nums 已按 非递减顺序 排序
+
+进阶：请你设计时间复杂度为 O(n) 的算法解决本问题
+
+Solution:
+  C:
+    /**
+     * Note: The returned array must be malloced, assume caller calls free().
+     */
+    int* sortedSquares(int* nums, int numsSize, int* returnSize) {
+        *returnSize = numsSize;
+        int* ret = (int*)malloc(sizeof(int) * numsSize);
+    
+        // 在首尾分别设置指针
+        int left = 0, right = numsSize - 1;
+        int p = numsSize - 1;
+    
+        // 自后向前合并
+        while (left <= right) {
+            if (nums[right] * nums[right] >= nums[left] * nums[left]) {
+                ret[p--] = nums[right] * nums[right];
+                right--;
+            }
+            else {
+                ret[p--] = nums[left] * nums[left];
+                left++;
+            }
+        }
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> sortedSquares(vector<int>& nums) {
+            vector<int> ret(nums.size());
+    
+            // 在首尾分别设置指针
+            int left = 0, right = nums.size() - 1;
+            int p = nums.size() - 1;
+    
+            // 自后向前合并
+            while (left <= right) {
+                if (nums[right] * nums[right] >= nums[left] * nums[left]) {
+                    ret[p--] = nums[right] * nums[right];
+                    right--;
+                }
+                else {
+                    ret[p--] = nums[left] * nums[left];
+                    left++;
+                }
+            }
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[] sortedSquares(int[] nums) {
+            int[] ret = new int[nums.length];
+    
+            // 在首尾分别设置指针
+            int left = 0, right = nums.length - 1;
+            int p = nums.length - 1;
+    
+            // 自后向前合并
+            while (left <= right) {
+                if (nums[right] * nums[right] >= nums[left] * nums[left]) {
+                    ret[p--] = nums[right] * nums[right];
+                    right--;
+                }
+                else {
+                    ret[p--] = nums[left] * nums[left];
+                    left++;
+                }
+            }
+            return ret;
+        }
+    }
+
+
