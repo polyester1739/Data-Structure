@@ -2222,6 +2222,57 @@ Solution:
 
 Solution:
   C:
+    int findMin(int* nums, int numsSize) {
+        int left = 0, right = numsSize - 1;
+        int mid;
+    
+        // 使用二分查找
+        // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+        while (left < right) {
+            mid = left + (right - left) / 2;
+            if (nums[mid] > nums[right]) left = mid + 1;
+            // mid可能正好指向最小元素，所以要保留mid
+            else if (nums[mid] < nums[right]) right = mid;
+        }
+        return nums[left];
+    }
+
+  C++:
+    class Solution {
+    public:
+        int findMin(vector<int>& nums) {
+            int left = 0, right = nums.size() - 1;
+            int mid;
+    
+            // 使用二分查找
+            // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+            while (left < right) {
+                mid = left + (right - left) / 2;
+                if (nums[mid] > nums[right]) left = mid + 1;
+                // mid可能正好指向最小元素，所以要保留mid
+                else if (nums[mid] < nums[right]) right = mid;
+            }
+            return nums[left];
+        }
+    };
+
+  Java:
+    class Solution {
+        public int findMin(int[] nums) {
+            int left = 0, right = nums.length - 1;
+            int mid;
+    
+            // 使用二分查找
+            // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+            while (left < right) {
+                mid = left + (right - left) / 2;
+                if (nums[mid] > nums[right]) left = mid + 1;
+                // mid可能正好指向最小元素，所以要保留mid
+                else if (nums[mid] < nums[right]) right = mid;
+            }
+            return nums[left];
+        }
+    }
 
 
 21. 删除有序数组中的重复项    (26)
