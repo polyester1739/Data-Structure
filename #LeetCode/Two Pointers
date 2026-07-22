@@ -1267,3 +1267,74 @@ Solution:
 
 Solution:
   C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode *getIntersectionNode(struct ListNode *headA, struct ListNode *headB) {
+        // 设置并行指针，持续向后遍历，遍历到末尾就从另一个开头重新出发
+        struct ListNode* pA = headA;
+        struct ListNode* pB = headB;
+    
+        while (pA != pB) {
+            pA = (pA == NULL) ? headB : pA->next;
+            pB = (pB == NULL) ? headA : pB->next;
+        }
+        // 相遇点即为相交节点
+        return pA;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode(int x) : val(x), next(NULL) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+            // 设置并行指针，持续向后遍历，遍历到末尾就从另一个开头重新出发
+            ListNode* pA = headA;
+            ListNode* pB = headB;
+    
+            while (pA != pB) {
+                pA = (pA == NULL) ? headB : pA->next;
+                pB = (pB == NULL) ? headA : pB->next;
+            }
+            // 相遇点即为相交节点
+            return pA;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode(int x) {
+     *         val = x;
+     *         next = null;
+     *     }
+     * }
+     */
+    public class Solution {
+        public ListNode getIntersectionNode(ListNode headA, ListNode headB) {
+            // 设置并行指针，持续向后遍历，遍历到末尾就从另一个开头重新出发
+            ListNode pA = headA;
+            ListNode pB = headB;
+    
+            while (pA != pB) {
+                pA = (pA == null) ? headB : pA.next;
+                pB = (pB == null) ? headA : pB.next;
+            }
+            // 相遇点即为相交节点
+            return pA;
+        }
+    }
