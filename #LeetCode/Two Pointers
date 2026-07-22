@@ -200,4 +200,1070 @@ Solution:
     }
 
 
-3. 
+3. 两数之和 II - 输入有序数组    (167)
+
+给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于目标数 target 的两个数。
+
+如果设这两个数分别是 numbers[index_1] 和 numbers[index_2] ，则 1 <= index_1 < index_2 <= numbers.length 。
+以长度为 2 的整数数组 [index_1, index_2] 的形式返回这两个整数的下标 index_1 和 index_2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。
+
+
+示例 1：
+  输入：numbers = [2,7,11,15], target = 9
+  输出：[1,2]
+  解释：2 与 7 之和等于目标数 9 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+示例 2：
+  输入：numbers = [2,3,4], target = 6
+  输出：[1,3]
+  解释：2 与 4 之和等于目标数 6 。因此 index_1 = 1, index_2 = 3 。返回 [1, 3] 。
+
+示例 3：
+  输入：numbers = [-1,0], target = -1
+  输出：[1,2]
+  解释：-1 与 0 之和等于目标数 -1 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+提示：
+  2 <= numbers.length <= 3 * 10^4
+  -1000 <= numbers[i] <= 1000
+  numbers 按 非递减顺序 排列
+  -1000 <= target <= 1000
+  仅存在一个有效答案
+
+Solution:
+  C:
+    int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+        // 左右指针不断向中间逼近
+        int left = 0, right = numbersSize - 1;
+        int mem;
+    
+        while (left < right) {
+            if (numbers[left] + numbers[right] == target) break;
+            else if (numbers[left] + numbers[right] < target) {
+                mem = numbers[left];
+                while (left < right && numbers[left] == mem) left++;
+            }
+            else if (numbers[left] + numbers[right] > target) {
+                mem = numbers[right];
+                while (left < right && numbers[right] == mem) right--;
+            }
+        }
+    
+        // 如果有结果就返回下标对
+        if (left < right) {
+            *returnSize = 2;
+            int* ret = (int*)malloc(sizeof(int) * 2);
+            ret[0] = left + 1;
+            ret[1] = right + 1;
+            return ret;
+        }
+        else {
+            *returnSize = 0;
+            return NULL;
+        }
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> twoSum(vector<int>& numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.size() - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    vector<int> ret(2);
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            vector<int> ret(0);
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[] twoSum(int[] numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.length - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    int[] ret = new int[2];
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            return new int[0];
+        }
+    }
+
+
+4. 移除元素    (27)
+
+给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素。元素的顺序可能发生改变。然后返回 nums 中与 val 不同的元素的数量。
+
+假设 nums 中不等于 val 的元素数量为 k，要通过此题，您需要执行以下操作：
+
+更改 nums 数组，使 nums 的前 k 个元素包含不等于 val 的元素。nums 的其余元素和 nums 的大小并不重要。
+返回 k。
+
+用户评测：
+
+评测机将使用以下代码测试您的解决方案：
+  int[] nums = [...]; // 输入数组
+  int val = ...; // 要移除的值
+  int[] expectedNums = [...]; // 长度正确的预期答案。
+                              // 它以不等于 val 的值排序。
+  int k = removeElement(nums, val); // 调用你的实现
+  assert k == expectedNums.length;
+  sort(nums, 0, k); // 排序 nums 的前 k 个元素
+  for (int i = 0; i < k; i++) {
+      assert nums[i] == expectedNums[i];
+  }
+如果所有的断言都通过，你的解决方案将会 通过。
+
+示例 1：
+  输入：nums = [3,2,2,3], val = 3
+  输出：2, nums = [2,2,_,_]
+  解释：你的函数应该返回 k = 2, 并且 nums 中的前两个元素均为 2。
+  你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+示例 2：
+  输入：nums = [0,1,2,2,3,0,4,2], val = 2
+  输出：5, nums = [0,1,4,0,3,_,_,_]
+  解释：你的函数应该返回 k = 5，并且 nums 中的前五个元素为 0,0,1,3,4。
+  注意这五个元素可以任意顺序返回。你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+提示：
+  0 <= nums.length <= 100
+  0 <= nums[i] <= 50
+  0 <= val <= 100
+
+Solution:
+  C:
+    int removeElement(int* nums, int numsSize, int val) {
+        // 设置快慢指针
+        int slow = 0, fast = 0;
+        int k = 0;
+    
+        // 快指针用于读取内容，慢指针用于将内容写入数组
+        while (fast < numsSize) {
+            if (nums[fast] == val) fast++;
+            else {
+                nums[slow] = nums[fast];
+                fast++;
+                slow++;
+                k++;
+            }
+        }
+        return k;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int removeElement(vector<int>& nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.size()) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int removeElement(int[] nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.length) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    }
+
+
+5. 合并两个有序链表    (21)
+
+将两个升序链表合并为一个新的 升序 链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。 
+
+
+示例 1：
+  输入：l1 = [1,2,4], l2 = [1,3,4]
+  输出：[1,1,2,3,4,4]
+
+示例 2：
+  输入：l1 = [], l2 = []
+  输出：[]
+
+示例 3：
+  输入：l1 = [], l2 = [0]
+  输出：[0]
+
+提示：
+  两个链表的节点数目范围是 [0, 50]
+  -100 <= Node.val <= 100
+  l1 和 l2 均按 非递减顺序 排列
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* mergeTwoLists(struct ListNode* list1, struct ListNode* list2) {
+        // 设置返回的头节点
+        struct ListNode* ret = (struct ListNode*)malloc(sizeof(struct ListNode));
+        ret->next = NULL;
+        struct ListNode* tail = ret;
+    
+        // 并行双指针来获取内容
+        struct ListNode* p1 = list1;
+        struct ListNode* p2 = list2;
+        while (p1 != NULL && p2 != NULL) {
+            if (p1->val >= p2->val) {
+                struct ListNode* next = p2->next;
+                p2->next = NULL;
+                tail->next = p2;
+                tail = p2;
+                p2 = next;
+            }
+            else {
+                struct ListNode* next = p1->next;
+                p1->next = NULL;
+                tail->next = p1;
+                tail = p1;
+                p1 = next;
+            }
+        }
+        if (p1 != NULL) tail->next = p1;
+        else tail->next = p2;
+    
+        return ret->next;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+            // 设置返回的头节点
+            ListNode ret;
+            ListNode* tail = &ret;
+    
+            // 并行双指针来获取内容
+            ListNode* p1 = list1;
+            ListNode* p2 = list2;
+            while (p1 != NULL && p2 != NULL) {
+                if (p1->val >= p2->val) {
+                    ListNode* next = p2->next;
+                    p2->next = NULL;
+                    tail->next = p2;
+                    tail = p2;
+                    p2 = next;
+                }
+                else {
+                    ListNode* next = p1->next;
+                    p1->next = NULL;
+                    tail->next = p1;
+                    tail = p1;
+                    p1 = next;
+                }
+            }
+            if (p1 != NULL) tail->next = p1;
+            else tail->next = p2;
+    
+            return ret.next;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+            // 设置返回的头节点
+            ListNode ret = new ListNode();
+            ListNode tail = ret;
+    
+            // 并行双指针来获取内容
+            ListNode p1 = list1;
+            ListNode p2 = list2;
+            while (p1 != null && p2 != null) {
+                if (p1.val >= p2.val) {
+                    ListNode next = p2.next;
+                    p2.next = null;
+                    tail.next = p2;
+                    tail = p2;
+                    p2 = next;
+                }
+                else {
+                    ListNode next = p1.next;
+                    p1.next = null;
+                    tail.next = p1;
+                    tail = p1;
+                    p1 = next;
+                }
+            }
+            if (p1 != null) tail.next = p1;
+            else tail.next = p2;
+    
+            return ret.next;
+        }
+    }
+
+
+6. 分隔链表    (86)
+
+给你一个链表的头节点 head 和一个特定值 x ，请你对链表进行分隔，使得所有 小于 x 的节点都出现在 大于或等于 x 的节点之前。
+
+你应当 保留 两个分区中每个节点的初始相对位置。
+
+
+示例 1：
+  输入：head = [1,4,3,2,5,2], x = 3
+  输出：[1,2,2,4,3,5]
+
+示例 2：
+  输入：head = [2,1], x = 2
+  输出：[1,2]
+
+提示：
+  链表中节点的数目在范围 [0, 200] 内
+  -100 <= Node.val <= 100
+  -200 <= x <= 200
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* partition(struct ListNode* head, int x) {
+        // 以x为界限，将链表分为两条
+        struct ListNode* l1 = (struct ListNode*)malloc(sizeof(struct ListNode));
+        l1->next = NULL;
+        struct ListNode* tail1 = l1;
+        struct ListNode* l2 = (struct ListNode*)malloc(sizeof(struct ListNode));
+        l2->next = NULL;
+        struct ListNode* tail2 = l2;
+    
+        struct ListNode* p = head;
+        while (p != NULL) {
+            struct ListNode* next = p->next;
+            p->next = NULL;
+            if (p->val < x) {
+                tail1->next = p;
+                tail1 = p;
+            }
+            else {
+                tail2->next = p;
+                tail2 = p;
+            }
+            p = next;
+        }
+        
+        // 将两部分重新合并在一起
+        tail1->next = l2->next;
+        free(l2);
+        
+        struct ListNode* ret = l1->next;
+        free(l1);
+        return ret;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* partition(ListNode* head, int x) {
+            // 以x为界限，将链表分为两条
+            ListNode l1;
+            ListNode* tail1 = &l1;
+    
+            ListNode l2;
+            ListNode* tail2 = &l2;
+    
+            ListNode* p = head;
+            while (p != NULL) {
+                ListNode* next = p->next;
+                p->next = NULL;
+                if (p->val < x) {
+                    tail1->next = p;
+                    tail1 = p;
+                }
+                else {
+                    tail2->next = p;
+                    tail2 = p;
+                }
+                p = next;
+            }
+            
+            // 将两部分重新合并在一起
+            tail1->next = l2.next;
+            
+            return l1.next;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode partition(ListNode head, int x) {
+            // 以x为界限，将链表分为两条
+            ListNode l1 = new ListNode();
+            ListNode tail1 = l1;
+    
+            ListNode l2 = new ListNode();
+            ListNode tail2 = l2;
+    
+            ListNode p = head;
+            while (p != null) {
+                ListNode next = p.next;
+                p.next = null;
+                if (p.val < x) {
+                    tail1.next = p;
+                    tail1 = p;
+                }
+                else {
+                    tail2.next = p;
+                    tail2 = p;
+                }
+                p = next;
+            }
+            
+            // 将两部分重新合并在一起
+            tail1.next = l2.next;
+            
+            return l1.next;
+        }
+    }
+
+
+7. 删除链表的倒数第 N 个结点    (19)
+
+给你一个链表，删除链表的倒数第 n 个结点，并且返回链表的头结点。
+
+
+示例 1：
+  输入：head = [1,2,3,4,5], n = 2
+  输出：[1,2,3,5]
+
+示例 2：
+  输入：head = [1], n = 1
+  输出：[]
+
+示例 3：
+  输入：head = [1,2], n = 1
+  输出：[1]
+
+提示：
+  链表中结点的数目为 sz
+  1 <= sz <= 30
+  0 <= Node.val <= 100
+  1 <= n <= sz
+
+进阶：你能尝试使用一趟扫描实现吗？
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* removeNthFromEnd(struct ListNode* head, int n) {
+        // 设置快慢指针
+        struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+        dummy->next = head;
+        struct ListNode* fast = dummy;
+        struct ListNode* slow = dummy;
+    
+        // 快指针先走n步
+        for (int i = 0; i < n; i++) fast = fast->next;
+    
+        // 快慢指针同步
+        while (fast != NULL && fast->next != NULL) {
+            fast = fast->next;
+            slow = slow->next;
+        }
+    
+        // 删除倒数第n个节点
+        struct ListNode* target = slow->next;
+        slow->next = target->next;
+        free(target);
+        
+        return dummy->next;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* removeNthFromEnd(ListNode* head, int n) {
+            // 设置快慢指针
+            ListNode dummy;
+            dummy.next = head;
+            ListNode* fast = &dummy;
+            ListNode* slow = &dummy;
+    
+            // 快指针先走n步
+            for (int i = 0; i < n; i++) fast = fast->next;
+    
+            // 快慢指针同步
+            while (fast != NULL && fast->next != NULL) {
+                fast = fast->next;
+                slow = slow->next;
+            }
+    
+            // 删除倒数第n个节点
+            ListNode* target = slow->next;
+            slow->next = target->next;
+            delete target;
+            
+            return dummy.next;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode removeNthFromEnd(ListNode head, int n) {
+            // 设置快慢指针
+            ListNode dummy = new ListNode();
+            dummy.next = head;
+            ListNode fast = dummy;
+            ListNode slow = dummy;
+    
+            // 快指针先走n步
+            for (int i = 0; i < n; i++) fast = fast.next;
+    
+            // 快慢指针同步
+            while (fast != null && fast.next != null) {
+                fast = fast.next;
+                slow = slow.next;
+            }
+    
+            // 删除倒数第n个节点
+            slow.next = slow.next.next;
+            
+            return dummy.next;
+        }
+    }
+
+
+8. 链表的中间结点    (876)
+
+给你单链表的头结点 head ，请你找出并返回链表的中间结点。
+
+如果有两个中间结点，则返回第二个中间结点。
+
+
+示例 1：
+  输入：head = [1,2,3,4,5]
+  输出：[3,4,5]
+  解释：链表只有一个中间结点，值为 3 。
+
+示例 2：
+  输入：head = [1,2,3,4,5,6]
+  输出：[4,5,6]
+  解释：该链表有两个中间结点，值分别为 3 和 4 ，返回第二个结点。
+
+提示：
+  链表的结点数范围是 [1, 100]
+  1 <= Node.val <= 100
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* middleNode(struct ListNode* head) {
+        // 设置快慢指针
+        struct ListNode* fast = head;
+        struct ListNode* slow = head;
+    
+        // 快指针一次走两步，慢指针一次走一步
+        while (fast != NULL && fast->next != NULL) {
+            fast = fast->next->next;
+            slow = slow->next;
+        }
+        return slow;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* middleNode(ListNode* head) {
+            // 设置快慢指针
+            ListNode* fast = head;
+            ListNode* slow = head;
+    
+            // 快指针一次走两步，慢指针一次走一步
+            while (fast != NULL && fast->next != NULL) {
+                fast = fast->next->next;
+                slow = slow->next;
+            }
+            return slow;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode middleNode(ListNode head) {
+            // 设置快慢指针
+            ListNode fast = head;
+            ListNode slow = head;
+    
+            // 快指针一次走两步，慢指针一次走一步
+            while (fast != null && fast.next != null) {
+                fast = fast.next.next;
+                slow = slow.next;
+            }
+            return slow;
+        }
+    }
+
+
+9. 环形链表    (141)
+
+给你一个链表的头节点 head ，判断链表中是否有环。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。 为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。
+注意：pos 不作为参数进行传递 。仅仅是为了标识链表的实际情况。
+
+如果链表中存在环 ，则返回 true 。 否则，返回 false 。
+
+
+示例 1：
+  输入：head = [3,2,0,-4], pos = 1
+  输出：true
+  解释：链表中有一个环，其尾部连接到第二个节点。
+
+示例 2：
+  输入：head = [1,2], pos = 0
+  输出：true
+  解释：链表中有一个环，其尾部连接到第一个节点。
+
+示例 3：
+  输入：head = [1], pos = -1
+  输出：false
+  解释：链表中没有环。
+
+提示：
+  链表中节点的数目范围是 [0, 10^4]
+  -10^5 <= Node.val <= 10^5
+  pos 为 -1 或者链表中的一个 有效索引 。
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    bool hasCycle(struct ListNode *head) {
+        // 设置快慢指针
+        struct ListNode* fast = head;
+        struct ListNode* slow = head;
+    
+        // 快指针一次走两步，慢指针一次走一步
+        while (fast != NULL && fast->next != NULL) {
+            fast = fast->next->next;
+            slow = slow->next;
+            // 如果会相遇，说明有环
+            if (fast == slow) return true;
+        }
+        return false;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode(int x) : val(x), next(NULL) {}
+     * };
+     */
+    class Solution {
+    public:
+        bool hasCycle(ListNode *head) {
+            // 设置快慢指针
+            ListNode* fast = head;
+            ListNode* slow = head;
+    
+            // 快指针一次走两步，慢指针一次走一步
+            while (fast != NULL && fast->next != NULL) {
+                fast = fast->next->next;
+                slow = slow->next;
+                // 如果会相遇，说明有环
+                if (fast == slow) return true;
+            }
+            return false;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode(int x) {
+     *         val = x;
+     *         next = null;
+     *     }
+     * }
+     */
+    public class Solution {
+        public boolean hasCycle(ListNode head) {
+            // 设置快慢指针
+            ListNode fast = head;
+            ListNode slow = head;
+    
+            // 快指针一次走两步，慢指针一次走一步
+            while (fast != null && fast.next != null) {
+                fast = fast.next.next;
+                slow = slow.next;
+                // 如果会相遇，说明有环
+                if (fast == slow) return true;
+            }
+            return false;
+        }
+    }
+
+
+10. 环形链表 II    (142)
+
+给定一个链表的头节点  head ，返回链表开始入环的第一个节点。 如果链表无环，则返回 null。
+
+如果链表中有某个节点，可以通过连续跟踪 next 指针再次到达，则链表中存在环。为了表示给定链表中的环，评测系统内部使用整数 pos 来表示链表尾连接到链表中的位置（索引从 0 开始）。
+如果 pos 是 -1，则在该链表中没有环。注意：pos 不作为参数进行传递，仅仅是为了标识链表的实际情况。
+
+不允许修改 链表。
+
+
+示例 1：
+  输入：head = [3,2,0,-4], pos = 1
+  输出：返回索引为 1 的链表节点
+  解释：链表中有一个环，其尾部连接到第二个节点。
+
+示例 2：
+  输入：head = [1,2], pos = 0
+  输出：返回索引为 0 的链表节点
+  解释：链表中有一个环，其尾部连接到第一个节点。
+
+示例 3：
+  输入：head = [1], pos = -1
+  输出：返回 null
+  解释：链表中没有环。
+
+提示：
+  链表中节点的数目范围在范围 [0, 10^4] 内
+  -10^5 <= Node.val <= 10^5
+  pos 的值为 -1 或者链表中的一个有效索引
+
+进阶：你是否可以使用 O(1) 空间解决此题？
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode *detectCycle(struct ListNode *head) {
+        // 设置快慢指针
+        struct ListNode* fast = head;
+        struct ListNode* slow = head;
+    
+        while (fast != NULL && fast->next != NULL) {
+            fast = fast->next->next;
+            slow = slow->next;
+            // 如果两指针会相遇，则说明有环
+            if (fast == slow) {
+                // 两指针分别从环外和相遇点同速出发，再次相遇即是入环节点
+                slow = head;
+                while (fast != slow) {
+                    fast = fast->next;
+                    slow = slow->next;
+                }
+                return slow;
+            }
+        }
+        return NULL;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode(int x) : val(x), next(NULL) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode *detectCycle(ListNode *head) {
+            // 设置快慢指针
+            ListNode* fast = head;
+            ListNode* slow = head;
+    
+            while (fast != NULL && fast->next != NULL) {
+                fast = fast->next->next;
+                slow = slow->next;
+                // 如果两指针会相遇，则说明有环
+                if (fast == slow) {
+                    // 两指针分别从环外和相遇点同速出发，再次相遇即是入环节点
+                    slow = head;
+                    while (fast != slow) {
+                        fast = fast->next;
+                        slow = slow->next;
+                    }
+                    return slow;
+                }
+            }
+            return NULL;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode(int x) {
+     *         val = x;
+     *         next = null;
+     *     }
+     * }
+     */
+    public class Solution {
+        public ListNode detectCycle(ListNode head) {
+            // 设置快慢指针
+            ListNode fast = head;
+            ListNode slow = head;
+    
+            while (fast != null && fast.next != null) {
+                fast = fast.next.next;
+                slow = slow.next;
+                // 如果两指针会相遇，则说明有环
+                if (fast == slow) {
+                    // 两指针分别从环外和相遇点同速出发，再次相遇即是入环节点
+                    slow = head;
+                    while (fast != slow) {
+                        fast = fast.next;
+                        slow = slow.next;
+                    }
+                    return slow;
+                }
+            }
+            return null;
+        }
+    }
+
+
+11. 相交链表    (160)
+
+给你两个单链表的头节点 headA 和 headB ，请你找出并返回两个单链表相交的起始节点。如果两个链表不存在相交节点，返回 null 。
+
+题目数据 保证 整个链式结构中不存在环。
+
+注意，函数返回结果后，链表必须 保持其原始结构 。
+
+自定义评测：
+
+评测系统 的输入如下（你设计的程序 不适用 此输入）：
+  intersectVal - 相交的起始节点的值。如果不存在相交节点，这一值为 0
+  listA - 第一个链表
+  listB - 第二个链表
+  skipA - 在 listA 中（从头节点开始）跳到交叉节点的节点数
+  skipB - 在 listB 中（从头节点开始）跳到交叉节点的节点数
+评测系统将根据这些输入创建链式数据结构，并将两个头节点 headA 和 headB 传递给你的程序。
+如果程序能够正确返回相交节点，那么你的解决方案将被 视作正确答案 。
+
+
+示例 1：
+  输入：intersectVal = 8, listA = [4,1,8,4,5], listB = [5,6,1,8,4,5], skipA = 2, skipB = 3
+  输出：Intersected at '8'
+  解释：
+    相交节点的值为 8 （注意，如果两个链表相交则不能为 0）。
+    从各自的表头开始算起，链表 A 为 [4,1,8,4,5]，链表 B 为 [5,6,1,8,4,5]。
+    在 A 中，相交节点前有 2 个节点；在 B 中，相交节点前有 3 个节点。
+    请注意相交节点的值不为 1，因为在链表 A 和链表 B 之中值为 1 的节点 (A 中第二个节点和 B 中第三个节点) 是不同的节点。
+    换句话说，它们在内存中指向两个不同的位置，而链表 A 和链表 B 中值为 8 的节点 (A 中第三个节点，B 中第四个节点) 在内存中指向相同的位置。
+
+示例 2：
+  输入：intersectVal = 2, listA = [1,9,1,2,4], listB = [3,2,4], skipA = 3, skipB = 1
+  输出：Intersected at '2'
+  解释：
+    相交节点的值为 2 （注意，如果两个链表相交则不能为 0）。
+    从各自的表头开始算起，链表 A 为 [1,9,1,2,4]，链表 B 为 [3,2,4]。
+    在 A 中，相交节点前有 3 个节点；在 B 中，相交节点前有 1 个节点。
+
+示例 3：
+  输入：intersectVal = 0, listA = [2,6,4], listB = [1,5], skipA = 3, skipB = 2
+  输出：No intersection
+  解释：
+    从各自的表头开始算起，链表 A 为 [2,6,4]，链表 B 为 [1,5]。
+    由于这两个链表不相交，所以 intersectVal 必须为 0，而 skipA 和 skipB 可以是任意值。
+    这两个链表不相交，因此返回 null 。
+
+提示：
+  listA 中节点数目为 m
+  listB 中节点数目为 n
+  1 <= m, n <= 3 * 10^4
+  1 <= Node.val <= 10^5
+  0 <= skipA <= m
+  0 <= skipB <= n
+  如果 listA 和 listB 没有交点，intersectVal 为 0
+  如果 listA 和 listB 有交点，intersectVal == listA[skipA] == listB[skipB]
+
+进阶：你能否设计一个时间复杂度 O(m + n) 、仅用 O(1) 内存的解决方案？
+
+Solution:
+  C:
