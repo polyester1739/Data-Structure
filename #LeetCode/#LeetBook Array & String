@@ -29,7 +29,7 @@
     下标 0 之后的数字和为：0
 
 提示：
-  1 <= nums.length <= 104
+  1 <= nums.length <= 10^4
   -1000 <= nums[i] <= 1000
 
 Solution:
@@ -106,10 +106,10 @@ Java:
   输出: 4
 
 提示：
-  1 <= nums.length <= 104
-  -104 <= nums[i] <= 104
+  1 <= nums.length <= 10^4
+  -10^4 <= nums[i] <= 10^4
   nums 为 无重复元素 的 升序 排列数组
-  -104 <= target <= 104
+  -10^4 <= target <= 10^4
 
 Solution:
   C:
@@ -196,9 +196,9 @@ Java:
   解释：区间 [1,4] 和 [4,7] 可被视为重叠区间。
  
 提示：
-  1 <= intervals.length <= 104
+  1 <= intervals.length <= 10^4
   intervals[i].length == 2
-  0 <= start_i <= end_i <= 104
+  0 <= start_i <= end_i <= 10^4
 
 Solution:
   C:
@@ -531,9 +531,9 @@ Solution:
 提示：
   m == mat.length
   n == mat[i].length
-  1 <= m, n <= 104
-  1 <= m * n <= 104
-  -105 <= mat[i][j] <= 105
+  1 <= m, n <= 10^4
+  1 <= m * n <= 10^4
+  -10^5 <= mat[i][j] <= 10^5
 
 Solution:
   C:
@@ -1031,7 +1031,7 @@ Solution:
   解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
 
 提示：
-  1 <= s.length <= 104
+  1 <= s.length <= 10^4
   s 包含英文大小写字母、数字和空格 ' '
   s 中 至少存在一个 单词
  
@@ -1196,7 +1196,7 @@ Solution:
   解释："leeto" 没有在 "leetcode" 中出现，所以返回 -1 。
 
 提示：
-  1 <= haystack.length, needle.length <= 104
+  1 <= haystack.length, needle.length <= 10^4
   haystack 和 needle 仅由小写英文字符组成
 
 Solution:
