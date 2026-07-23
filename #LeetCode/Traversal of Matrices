@@ -521,4 +521,444 @@ Solution:
     }
 
 
+5. 将矩阵按对角线排序    (1329)
+
+矩阵对角线 是一条从矩阵最上面行或者最左侧列中的某个元素开始的对角线，沿右下方向一直到矩阵末尾的元素。例如，矩阵 mat 有 6 行 3 列，
+从 mat[2][0] 开始的 矩阵对角线 将会经过 mat[2][0]、mat[3][1] 和 mat[4][2] 。
+
+给你一个 m * n 的整数矩阵 mat ，请你将同一条 矩阵对角线 上的元素按升序排序后，返回排好序的矩阵。
+
+
+示例 1：
+  输入：mat = [[3,3,1,1],[2,2,1,2],[1,1,1,2]]
+  输出：[[1,1,1,1],[1,2,2,2],[1,2,3,3]]
+
+示例 2：
+  输入：mat = [[11,25,66,1,69,7],[23,55,17,45,15,52],[75,31,36,44,58,8],[22,27,33,25,68,4],[84,28,14,11,5,50]]
+  输出：[[5,17,4,1,52,7],[11,11,25,45,8,69],[14,23,25,44,58,15],[22,27,31,36,50,66],[84,28,75,33,55,68]]
+
+提示：
+  m == mat.length
+  n == mat[i].length
+  1 <= m, n <= 100
+  1 <= mat[i][j] <= 100
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int cmp(const void* a, const void* b) {
+        return *(int*)a - *(int*)b;
+    }
+    
+    int** diagonalSort(int** mat, int matSize, int* matColSize, int* returnSize, int** returnColumnSizes) {
+        // 使用一个二维数组来存储对角线的数据
+        int** diagonals = (int**)malloc(sizeof(int*) * (matSize + matColSize[0] - 1));
+        int diagonalMaxSize = (matSize < matColSize[0]) ? matSize : matColSize[0];
+        for (int i = 0; i < matSize + matColSize[0] - 1; i++) diagonals[i] = (int*)malloc(sizeof(int) * diagonalMaxSize);
+        int* diagonalSizes = (int*)malloc(sizeof(int) * (matSize + matColSize[0] - 1));
+    
+        // 向右下方遍历
+        int row, column;
+        for (int i = 0; i < matSize + matColSize[0] - 1; i++) {
+            if (i < matSize) {
+                row = matSize - 1 - i;
+                column = 0;
+            }
+            else {
+                row = 0;
+                column = i - matSize + 1;
+            }
+    
+            int p = 0;
+            diagonalSizes[i] = 0;
+            while (row < matSize && column < matColSize[0]) {
+                diagonals[i][p++] = mat[row++][column++];
+                diagonalSizes[i]++;
+            }
+    
+            // 为每一条对角线的元素重新排序
+            qsort(diagonals[i], diagonalSizes[i], sizeof(int), cmp);
+        }
+    
+        for (int i = 0; i < matSize + matColSize[0] - 1; i++) {
+            if (i < matSize) {
+                row = matSize - 1 - i;
+                column = 0;
+            }
+            else {
+                row = 0;
+                column = i - matSize + 1;
+            }
+    
+            int p = 0;
+            while (row < matSize && column < matColSize[0]) mat[row++][column++] = diagonals[i][p++];
+        }
+        
+        *returnSize = matSize;
+        *returnColumnSizes = (int*)malloc(sizeof(int) * matSize);
+        for (int i = 0; i < matSize; i++) (*returnColumnSizes)[i] = matColSize[0];
+        return mat;
+    }
+
+  C++:
+    class Solution {
+    public:
+        static int cmp(const void* a, const void* b) {
+            return *(int*)a - *(int*)b;
+        }
+        
+        vector<vector<int>> diagonalSort(vector<vector<int>>& mat) {
+            // 使用一个二维数组来存储对角线的数据
+            vector<vector<int>> diagonals(mat.size() + mat[0].size() - 1);
+            int diagonalMaxSize = (mat.size() < mat[0].size()) ? mat.size() : mat[0].size();
+            for (int i = 0; i < mat.size() + mat[0].size() - 1; i++) diagonals[i].resize(diagonalMaxSize);
+            vector<int> diagonalSizes(mat.size() + mat[0].size() - 1);
+    
+            // 向右下方遍历
+            int row, column;
+            for (int i = 0; i < mat.size() + mat[0].size() - 1; i++) {
+                if (i < mat.size()) {
+                    row = mat.size() - 1 - i;
+                    column = 0;
+                }
+                else {
+                    row = 0;
+                    column = i - mat.size() + 1;
+                }
+    
+                int p = 0;
+                diagonalSizes[i] = 0;
+                while (row < mat.size() && column < mat[0].size()) {
+                    diagonals[i][p++] = mat[row++][column++];
+                    diagonalSizes[i]++;
+                }
+    
+                // 为每一条对角线的元素重新排序
+                qsort(diagonals[i].data(), diagonalSizes[i], sizeof(int), cmp);
+            }
+    
+            for (int i = 0; i < mat.size() + mat[0].size() - 1; i++) {
+                if (i < mat.size()) {
+                    row = mat.size() - 1 - i;
+                    column = 0;
+                }
+                else {
+                    row = 0;
+                    column = i - mat.size() + 1;
+                }
+    
+                int p = 0;
+                while (row < mat.size() && column < mat[0].size()) mat[row++][column++] = diagonals[i][p++];
+            }
+            
+            return mat;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[][] diagonalSort(int[][] mat) {
+            // 使用一个二维数组来存储对角线的数据
+            ArrayList<ArrayList<Integer>> diagonals = new ArrayList<>();
+    
+            // 向右下方遍历
+            int row, column;
+            for (int i = 0; i < mat.length + mat[0].length - 1; i++) {
+                diagonals.add(new ArrayList<>());
+                if (i < mat.length) {
+                    row = mat.length - 1 - i;
+                    column = 0;
+                }
+                else {
+                    row = 0;
+                    column = i - mat.length + 1;
+                }
+    
+                while (row < mat.length && column < mat[0].length) diagonals.get(i).add(mat[row++][column++]);
+    
+                // 为每一条对角线的元素重新排序
+                Collections.sort(diagonals.get(i));
+            }
+    
+            for (int i = 0; i < mat.length + mat[0].length - 1; i++) {
+                if (i < mat.length) {
+                    row = mat.length - 1 - i;
+                    column = 0;
+                }
+                else {
+                    row = 0;
+                    column = i - mat.length + 1;
+                }
+    
+                int p = 0;
+                while (row < mat.length && column < mat[0].length) {
+                    mat[row++][column++] = diagonals.get(i).get(p);
+                    p++;
+                }
+            }
+            
+            return mat;
+        }
+    }
+
+
+6. 二维网格迁移    (1260)
+
+给你一个 m 行 n 列的二维网格 grid 和一个整数 k。你需要将 grid 迁移 k 次。
+
+每次「迁移」操作将会引发下述活动：
+
+位于 grid[i][j]（j < n - 1）的元素将会移动到 grid[i][j + 1]。
+位于 grid[i][n - 1] 的元素将会移动到 grid[i + 1][0]。
+位于 grid[m - 1][n - 1] 的元素将会移动到 grid[0][0]。
+请你返回 k 次迁移操作后最终得到的 二维网格。
+
+
+示例 1：
+  输入：grid = [[1,2,3],[4,5,6],[7,8,9]], k = 1
+  输出：[[9,1,2],[3,4,5],[6,7,8]]
+
+示例 2：
+  输入：grid = [[3,8,1,9],[19,7,2,5],[4,6,11,10],[12,0,21,13]], k = 4
+  输出：[[12,0,21,13],[3,8,1,9],[19,7,2,5],[4,6,11,10]]
+
+示例 3：
+  输入：grid = [[1,2,3],[4,5,6],[7,8,9]], k = 9
+  输出：[[1,2,3],[4,5,6],[7,8,9]]
+
+提示：
+  m == grid.length
+  n == grid[i].length
+  1 <= m <= 50
+  1 <= n <= 50
+  -1000 <= grid[i][j] <= 1000
+  0 <= k <= 100
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    void reverse(int* array, int left, int right) {
+        int temp;
+        while (left < right) {
+            temp = array[left];
+            array[left] = array[right];
+            array[right] = temp;
+            left++;
+            right--;
+        }
+    }
+    
+    int** shiftGrid(int** grid, int gridSize, int* gridColSize, int k, int* returnSize, int** returnColumnSizes) {
+        // 将二维数组压缩成一维数组
+        int* array = (int*)malloc(sizeof(int) * (gridSize * gridColSize[0]));
+        int p = 0;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridColSize[0]; j++) {
+                array[p++] = grid[i][j];
+            }
+        }
+    
+        // 整体反转一维数组，随后再次反转前k个元素以及其后面的所有元素
+        // k需要对矩阵行数与列数的乘积取余
+        int left = 0, right = gridSize * gridColSize[0] - 1;
+        reverse(array, left, right);
+        right = (k % (gridSize * gridColSize[0])) - 1;
+        reverse(array, left, right);
+        left = (k % (gridSize * gridColSize[0]));
+        right = gridSize * gridColSize[0] - 1;
+        reverse(array, left, right);
+    
+        // 复制数据到原二维数组
+        p = 0;
+        for (int i = 0; i < gridSize; i++) {
+            for (int j = 0; j < gridColSize[0]; j++) {
+                grid[i][j] = array[p++];
+            }
+        }
+        free(array);
+    
+        *returnSize = gridSize;
+        *returnColumnSizes = (int*)malloc(sizeof(int) * gridSize);
+        for (int i = 0; i < gridSize; i++) (*returnColumnSizes)[i] = gridColSize[0];
+        return grid;
+    }
+
+  C++:
+    class Solution {
+    public:
+        void reverse(vector<int>& array, int left, int right) {
+            int temp;
+            while (left < right) {
+                temp = array[left];
+                array[left] = array[right];
+                array[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    
+        vector<vector<int>> shiftGrid(vector<vector<int>>& grid, int k) {
+            // 将二维数组压缩成一维数组
+            vector<int> array(grid.size() * grid[0].size());
+            int p = 0;
+            for (int i = 0; i < grid.size(); i++) {
+                for (int j = 0; j < grid[0].size(); j++)   {
+                    array[p++] = grid[i][j];
+                }
+            }
+    
+            // 整体反转一维数组，随后再次反转前k个元素以及其后面的所有元素
+            // k需要对矩阵行数与列数的乘积取余
+            int left = 0, right = grid.size() * grid[0].size() - 1;
+            reverse(array, left, right);
+            right = (k % (grid.size() * grid[0].size())) - 1;
+            reverse(array, left, right);
+            left = (k % (grid.size() * grid[0].size()));
+            right = grid.size() * grid[0].size() - 1;
+            reverse(array, left, right);
+    
+            // 复制数据到原二维数组
+            p = 0;
+            for (int i = 0; i < grid.size(); i++) {
+                for (int j = 0; j < grid[0].size(); j++) {
+                    grid[i][j] = array[p++];
+                }
+            }
+    
+            return grid;
+        }
+    };
+
+  Java:
+    class Solution {
+        void reverse(int[] array, int left, int right) {
+            int temp;
+            while (left < right) {
+                temp = array[left];
+                array[left] = array[right];
+                array[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        
+        public List<List<Integer>> shiftGrid(int[][] grid, int k) {
+            // 将二维数组压缩成一维数组
+            int[] array = new int[grid.length * grid[0].length];
+            int p = 0;
+            for (int i = 0; i < grid.length; i++) {
+                for (int j = 0; j < grid[0].length; j++) array[p++] = grid[i][j];
+            }
+    
+            // 整体反转一维数组，随后再次反转前k个元素以及其后面的所有元素
+            // k需要对矩阵行数与列数的乘积取余
+            int left = 0, right = grid.length * grid[0].length - 1;
+            reverse(array, left, right);
+            right = (k % (grid.length * grid[0].length)) - 1;
+            reverse(array, left, right);
+            left = (k % (grid.length * grid[0].length));
+            right = grid.length * grid[0].length - 1;
+            reverse(array, left, right);
+    
+            // 复制数据到返回列表
+            List<List<Integer>> ret = new ArrayList<>();
+            p = 0;
+            for (int i = 0; i < grid.length; i++) {
+                ret.add(new ArrayList<>());
+                for (int j = 0; j < grid[0].length; j++) {
+                    ret.get(i).add(array[p++]);
+                }
+            }
+    
+            return ret;
+        }
+    }
+
+
+7. 转置矩阵    (867)
+
+给你一个二维整数数组 matrix， 返回 matrix 的 转置矩阵 。
+
+矩阵的 转置 是指将矩阵的主对角线翻转，交换矩阵的行索引与列索引。
+
+
+示例 1：
+  输入：matrix = [[1,2,3],[4,5,6],[7,8,9]]
+  输出：[[1,4,7],[2,5,8],[3,6,9]]
+
+示例 2：
+  输入：matrix = [[1,2,3],[4,5,6]]
+  输出：[[1,4],[2,5],[3,6]]
+
+提示：
+  m == matrix.length
+  n == matrix[i].length
+  1 <= m, n <= 1000
+  1 <= m * n <= 10^5
+  -10^9 <= matrix[i][j] <= 10^9
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int** transpose(int** matrix, int matrixSize, int* matrixColSize, int* returnSize, int** returnColumnSizes) {
+        int** ret = (int**)malloc(sizeof(int*) * matrixColSize[0]);
+        for (int i = 0; i < matrixColSize[0]; i++) ret[i] = (int*)malloc(sizeof(int) * matrixSize);
+        *returnSize = matrixColSize[0];
+        *returnColumnSizes = (int*)malloc(sizeof(int) * matrixColSize[0]);
+        for (int i = 0; i < matrixColSize[0]; i++) (*returnColumnSizes)[i] = matrixSize;
+    
+        // 交换矩阵中每一元的行数和列数
+        for (int i = 0; i < matrixSize; i++) {
+            for (int j = 0; j < matrixColSize[0]; j++) {
+                ret[j][i] = matrix[i][j];
+            }
+        }
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<vector<int>> transpose(vector<vector<int>>& matrix) {
+            vector<vector<int>> ret(matrix[0].size());
+            for (int i = 0; i < matrix[0].size(); i++) ret[i].resize(matrix.size());
+    
+            // 交换矩阵中每一元的行数和列数
+            for (int i = 0; i < matrix.size(); i++) {
+                for (int j = 0; j < matrix[0].size(); j++) {
+                    ret[j][i] = matrix[i][j];
+                }
+            }
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[][] transpose(int[][] matrix) {
+            int[][] ret = new int[matrix[0].length][];
+            for (int i = 0; i < matrix[0].length; i++) ret[i] = new int[matrix.length];
+    
+            // 交换矩阵中每一元的行数和列数
+            for (int i = 0; i < matrix.length; i++) {
+                for (int j = 0; j < matrix[0].length; j++) {
+                    ret[j][i] = matrix[i][j];
+                }
+            }
+            return ret;
+        }
+    }
+
 来源：力扣（LeetCode）
