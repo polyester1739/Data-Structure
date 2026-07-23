@@ -29,7 +29,7 @@
     下标 0 之后的数字和为：0
 
 提示：
-  1 <= nums.length <= 104
+  1 <= nums.length <= 10^4
   -1000 <= nums[i] <= 1000
 
 Solution:
@@ -106,10 +106,10 @@ Java:
   输出: 4
 
 提示：
-  1 <= nums.length <= 104
-  -104 <= nums[i] <= 104
+  1 <= nums.length <= 10^4
+  -10^4 <= nums[i] <= 10^4
   nums 为 无重复元素 的 升序 排列数组
-  -104 <= target <= 104
+  -10^4 <= target <= 10^4
 
 Solution:
   C:
@@ -196,9 +196,9 @@ Java:
   解释：区间 [1,4] 和 [4,7] 可被视为重叠区间。
  
 提示：
-  1 <= intervals.length <= 104
+  1 <= intervals.length <= 10^4
   intervals[i].length == 2
-  0 <= start_i <= end_i <= 104
+  0 <= start_i <= end_i <= 10^4
 
 Solution:
   C:
@@ -531,9 +531,9 @@ Solution:
 提示：
   m == mat.length
   n == mat[i].length
-  1 <= m, n <= 104
-  1 <= m * n <= 104
-  -105 <= mat[i][j] <= 105
+  1 <= m, n <= 10^4
+  1 <= m * n <= 10^4
+  -10^5 <= mat[i][j] <= 10^5
 
 Solution:
   C:
@@ -1031,7 +1031,7 @@ Solution:
   解释：如果两个单词间有多余的空格，反转后的字符串需要将单词间的空格减少到仅有一个。
 
 提示：
-  1 <= s.length <= 104
+  1 <= s.length <= 10^4
   s 包含英文大小写字母、数字和空格 ' '
   s 中 至少存在一个 单词
  
@@ -1196,7 +1196,7 @@ Solution:
   解释："leeto" 没有在 "leetcode" 中出现，所以返回 -1 。
 
 提示：
-  1 <= haystack.length, needle.length <= 104
+  1 <= haystack.length, needle.length <= 10^4
   haystack 和 needle 仅由小写英文字符组成
 
 Solution:
@@ -1342,6 +1342,1091 @@ Solution:
                 }
             }
             return -1;
+        }
+    }
+
+
+11. 反转字符串    (344)
+
+编写一个函数，其作用是将输入的字符串反转过来。输入字符串以字符数组 s 的形式给出。
+
+不要给另外的数组分配额外的空间，你必须原地修改输入数组、使用 O(1) 的额外空间解决这一问题。
+
+
+示例 1：
+  输入：s = ["h","e","l","l","o"]
+  输出：["o","l","l","e","h"]
+
+示例 2：
+  输入：s = ["H","a","n","n","a","h"]
+  输出：["h","a","n","n","a","H"]
+
+提示：
+  1 <= s.length <= 10^5
+  s[i] 都是 ASCII 码表中的可打印字符
+
+Solution:
+  C:
+    void reverseString(char* s, int sSize) {
+        // 设置左右指针
+        int left = 0, right = sSize - 1;
+    
+        // 左右指针往中间碰，不断将对应索引处的字符进行交换
+        char temp;
+        while (left < right) {
+            temp = s[left];
+            s[left] = s[right];
+            s[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
+  C++:
+    class Solution {
+    public:
+        void reverseString(vector<char>& s) {
+            // 设置左右指针
+            int left = 0, right = s.size() - 1;
+    
+            // 左右指针往中间碰，不断将对应索引处的字符进行交换
+            char temp;
+            while (left < right) {
+                temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    };
+
+  Java:
+    class Solution {
+        public void reverseString(char[] s) {
+            // 设置左右指针
+            int left = 0, right = s.length - 1;
+    
+            // 左右指针往中间碰，不断将对应索引处的字符进行交换
+            char temp;
+            while (left < right) {
+                temp = s[left];
+                s[left] = s[right];
+                s[right] = temp;
+                left++;
+                right--;
+            }
+        }
+    }
+
+
+12. 数组拆分    (561)
+
+给定长度为 2n 的整数数组 nums ，你的任务是将这些数分成 n 对, 例如 (a_1, b_1), (a_2, b_2), ..., (a_n, b_n) ，使得从 1 到 n 的 min(a_i, b_i) 总和最大。
+返回该 最大总和 。
+
+
+示例 1：
+  输入：nums = [1,4,3,2]
+  输出：4
+  解释：
+    所有可能的分法（忽略元素顺序）为：
+    1. (1, 4), (2, 3) -> min(1, 4) + min(2, 3) = 1 + 2 = 3
+    2. (1, 3), (2, 4) -> min(1, 3) + min(2, 4) = 1 + 2 = 3
+    3. (1, 2), (3, 4) -> min(1, 2) + min(3, 4) = 1 + 3 = 4
+    所以最大总和为 4
+
+示例 2：
+  输入：nums = [6,2,6,5,1,2]
+  输出：9
+  解释：最优的分法为 (2, 1), (2, 5), (6, 6). min(2, 1) + min(2, 5) + min(6, 6) = 1 + 2 + 6 = 9
+
+提示：
+  1 <= n <= 10^4
+  nums.length == 2 * n
+  -10^4 <= nums[i] <= 10^4
+
+Solution:
+  C:
+    int cmp(const void* a, const void* b) {
+        return *(int*)a - *(int*)b; 
+    }
+    
+    int arrayPairSum(int* nums, int numsSize) {
+        // 从小到大排序
+        qsort(nums, numsSize, sizeof(int), cmp);
+        int p = 0;
+        int ret = 0;
+    
+        // 通过while循环完成遍历
+        while (p < numsSize) {
+            ret += nums[p];
+            p += 2;
+        }
+    
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int arrayPairSum(vector<int>& nums) {
+            // 从小到大排序
+            sort(nums.begin(), nums.end());
+            int p = 0;
+            int ret = 0;
+    
+            // 通过while循环完成遍历
+            while (p < nums.size()) {
+                ret += nums[p];
+                p += 2;
+            }
+    
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int arrayPairSum(int[] nums) {
+            // 从小到大排序
+            Arrays.sort(nums);
+            int p = 0;
+            int ret = 0;
+    
+            // 通过while循环完成遍历
+            while (p < nums.length) {
+                ret += nums[p];
+                p += 2;
+            }
+    
+            return ret;
+        }
+    }
+
+
+13. 两数之和 II - 输入有序数组    (167)
+
+给你一个下标从 1 开始的整数数组 numbers ，该数组已按 非递减顺序排列  ，请你从数组中找出满足相加之和等于目标数 target 的两个数。
+
+如果设这两个数分别是 numbers[index_1] 和 numbers[index_2] ，则 1 <= index_1 < index_2 <= numbers.length 。
+以长度为 2 的整数数组 [index_1, index_2] 的形式返回这两个整数的下标 index_1 和 index_2。
+
+你可以假设每个输入 只对应唯一的答案 ，而且你 不可以 重复使用相同的元素。
+
+你所设计的解决方案必须只使用常量级的额外空间。
+
+
+示例 1：
+  输入：numbers = [2,7,11,15], target = 9
+  输出：[1,2]
+  解释：2 与 7 之和等于目标数 9 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+示例 2：
+  输入：numbers = [2,3,4], target = 6
+  输出：[1,3]
+  解释：2 与 4 之和等于目标数 6 。因此 index_1 = 1, index_2 = 3 。返回 [1, 3] 。
+
+示例 3：
+  输入：numbers = [-1,0], target = -1
+  输出：[1,2]
+  解释：-1 与 0 之和等于目标数 -1 。因此 index_1 = 1, index_2 = 2 。返回 [1, 2] 。
+
+提示：
+  2 <= numbers.length <= 3 * 10^4
+  -1000 <= numbers[i] <= 1000
+  numbers 按 非递减顺序 排列
+  -1000 <= target <= 1000
+  仅存在一个有效答案
+
+Solution:
+  C:
+    int* twoSum(int* numbers, int numbersSize, int target, int* returnSize) {
+        // 左右指针不断向中间逼近
+        int left = 0, right = numbersSize - 1;
+        int mem;
+    
+        while (left < right) {
+            if (numbers[left] + numbers[right] == target) break;
+            else if (numbers[left] + numbers[right] < target) {
+                mem = numbers[left];
+                while (left < right && numbers[left] == mem) left++;
+            }
+            else if (numbers[left] + numbers[right] > target) {
+                mem = numbers[right];
+                while (left < right && numbers[right] == mem) right--;
+            }
+        }
+    
+        // 如果有结果就返回下标对
+        if (left < right) {
+            *returnSize = 2;
+            int* ret = (int*)malloc(sizeof(int) * 2);
+            ret[0] = left + 1;
+            ret[1] = right + 1;
+            return ret;
+        }
+        else {
+            *returnSize = 0;
+            return NULL;
+        }
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> twoSum(vector<int>& numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.size() - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    vector<int> ret(2);
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            vector<int> ret(0);
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int[] twoSum(int[] numbers, int target) {
+            // 左右指针不断向中间逼近
+            int left = 0, right = numbers.length - 1;
+            int mem;
+    
+            while (left < right) {
+                if (numbers[left] + numbers[right] == target) {
+                    // 如果有结果就返回下标对
+                    int[] ret = new int[2];
+                    ret[0] = left + 1;
+                    ret[1] = right + 1;
+                    return ret;
+                }
+                else if (numbers[left] + numbers[right] < target) {
+                    mem = numbers[left];
+                    while (left < right && numbers[left] == mem) left++;
+                }
+                else if (numbers[left] + numbers[right] > target) {
+                    mem = numbers[right];
+                    while (left < right && numbers[right] == mem) right--;
+                }
+            }
+    
+            // 如果没有结果就返回空结果(题目中不会触发)
+            return new int[0];
+        }
+    }
+
+
+14. 移除元素    (27)
+
+给你一个数组 nums 和一个值 val，你需要 原地 移除所有数值等于 val 的元素。元素的顺序可能发生改变。然后返回 nums 中与 val 不同的元素的数量。
+
+假设 nums 中不等于 val 的元素数量为 k，要通过此题，您需要执行以下操作：
+
+更改 nums 数组，使 nums 的前 k 个元素包含不等于 val 的元素。nums 的其余元素和 nums 的大小并不重要。
+返回 k。
+
+用户评测：
+
+评测机将使用以下代码测试您的解决方案：
+  int[] nums = [...]; // 输入数组
+  int val = ...; // 要移除的值
+  int[] expectedNums = [...]; // 长度正确的预期答案。
+                              // 它以不等于 val 的值排序。
+  int k = removeElement(nums, val); // 调用你的实现
+  assert k == expectedNums.length;
+  sort(nums, 0, k); // 排序 nums 的前 k 个元素
+  for (int i = 0; i < k; i++) {
+      assert nums[i] == expectedNums[i];
+  }
+如果所有的断言都通过，你的解决方案将会 通过。
+
+示例 1：
+  输入：nums = [3,2,2,3], val = 3
+  输出：2, nums = [2,2,_,_]
+  解释：你的函数应该返回 k = 2, 并且 nums 中的前两个元素均为 2。
+  你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+示例 2：
+  输入：nums = [0,1,2,2,3,0,4,2], val = 2
+  输出：5, nums = [0,1,4,0,3,_,_,_]
+  解释：你的函数应该返回 k = 5，并且 nums 中的前五个元素为 0,0,1,3,4。
+  注意这五个元素可以任意顺序返回。你在返回的 k 个元素之外留下了什么并不重要（因此它们并不计入评测）。
+
+提示：
+  0 <= nums.length <= 100
+  0 <= nums[i] <= 50
+  0 <= val <= 100
+
+Solution:
+  C:
+    int removeElement(int* nums, int numsSize, int val) {
+        // 设置快慢指针
+        int slow = 0, fast = 0;
+        int k = 0;
+    
+        // 快指针用于读取内容，慢指针用于将内容写入数组
+        while (fast < numsSize) {
+            if (nums[fast] == val) fast++;
+            else {
+                nums[slow] = nums[fast];
+                fast++;
+                slow++;
+                k++;
+            }
+        }
+        return k;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int removeElement(vector<int>& nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.size()) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int removeElement(int[] nums, int val) {
+            // 设置快慢指针
+            int slow = 0, fast = 0;
+            int k = 0;
+    
+            // 快指针用于读取内容，慢指针用于将内容写入数组
+            while (fast < nums.length) {
+                if (nums[fast] == val) fast++;
+                else {
+                    nums[slow] = nums[fast];
+                    fast++;
+                    slow++;
+                    k++;
+                }
+            }
+            return k;
+        }
+    }
+
+
+15. 最大连续 1 的个数    (485)
+
+给定一个二进制数组 nums ， 计算其中最大连续 1 的个数。
+
+
+示例 1：
+  输入：nums = [1,1,0,1,1,1]
+  输出：3
+  解释：开头的两位和最后的三位都是连续 1 ，所以最大连续 1 的个数是 3.
+
+示例 2:
+  输入：nums = [1,0,1,1,0,1]
+  输出：2
+
+提示：
+  1 <= nums.length <= 10^5
+  nums[i] 不是 0 就是 1.
+
+Solution:
+  C:
+    int findMaxConsecutiveOnes(int* nums, int numsSize) {
+        // 设置计数器
+        int cnt = 0;
+        int max = 0;
+    
+        // 遍历数组，出现1进行累加，出现0更新最大值
+        for (int i = 0; i < numsSize; i++) {
+            if (nums[i] == 0) {
+                if (cnt > max) max = cnt;
+                cnt = 0;
+            }
+            else cnt++;
+        }
+        if (cnt > max) max = cnt;
+    
+        return max;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int findMaxConsecutiveOnes(vector<int>& nums) {
+            // 设置计数器
+            int cnt = 0;
+            int max = 0;
+    
+            // 遍历数组，出现1进行累加，出现0更新最大值
+            for (int i = 0; i < nums.size(); i++) {
+                if (nums[i] == 0) {
+                    if (cnt > max) max = cnt;
+                    cnt = 0;
+                }
+                else cnt++;
+            }
+            if (cnt > max) max = cnt;
+    
+            return max;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int findMaxConsecutiveOnes(int[] nums) {
+            // 设置计数器
+            int cnt = 0;
+            int max = 0;
+    
+            // 遍历数组，出现1进行累加，出现0更新最大值
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] == 0) {
+                    if (cnt > max) max = cnt;
+                    cnt = 0;
+                }
+                else cnt++;
+            }
+            if (cnt > max) max = cnt;
+    
+            return max;
+        }
+    }
+
+
+16. 长度最小的子数组    (209)
+
+给定一个含有 n 个正整数的数组和一个正整数 target 。
+
+找出该数组中满足其总和大于等于 target 的长度最小的 子数组 [nums_l, nums_l+1, ..., nums_r-1, nums_r] ，并返回其长度。如果不存在符合条件的子数组，返回 0 。
+
+
+示例 1：
+  输入：target = 7, nums = [2,3,1,2,4,3]
+  输出：2
+  解释：子数组 [4,3] 是该条件下的长度最小的子数组。
+
+示例 2：
+  输入：target = 4, nums = [1,4,4]
+  输出：1
+
+示例 3：
+  输入：target = 11, nums = [1,1,1,1,1,1,1,1]
+  输出：0
+
+提示：
+  1 <= target <= 10^9
+  1 <= nums.length <= 10^5
+  1 <= nums[i] <= 10^4
+
+进阶：
+  如果你已经实现 O(n) 时间复杂度的解法, 请尝试设计一个 O(n log(n)) 时间复杂度的解法。
+
+Solution:
+  C:
+    int minSubArrayLen(int target, int* nums, int numsSize) {
+        // 设置左右指针
+        int left = 0, right = 0;
+        int sum = 0;
+        int length = INT_MAX;
+    
+        while (right < numsSize) {
+            sum += nums[right++];
+    
+            // 如果总和大于等于target，记录窗口长度，缩小窗口
+            while (sum >= target) {
+                if (right - left < length) length = right - left;
+                sum -= nums[left++];
+            }
+        }
+    
+        if (length == INT_MAX) return 0;
+        else return length;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int minSubArrayLen(int target, vector<int>& nums) {
+            // 设置左右指针
+            int left = 0, right = 0;
+            int sum = 0;
+            int length = INT_MAX;
+    
+            while (right < nums.size()) {
+                sum += nums[right++];
+    
+                // 如果总和大于等于target，记录窗口长度，缩小窗口
+                while (sum >= target) {
+                    if (right - left < length) length = right - left;
+                    sum -= nums[left++];
+                }
+            }
+    
+            if (length == INT_MAX) return 0;
+            else return length;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int minSubArrayLen(int target, int[] nums) {
+            // 设置左右指针
+            int left = 0, right = 0;
+            int sum = 0;
+            int length = Integer.MAX_VALUE;
+    
+            while (right < nums.length) {
+                sum += nums[right++];
+    
+                // 如果总和大于等于target，记录窗口长度，缩小窗口
+                while (sum >= target) {
+                    if (right - left < length) length = right - left;
+                    sum -= nums[left++];
+                }
+            }
+    
+            if (length == Integer.MAX_VALUE) return 0;
+            else return length;
+        }
+    }
+
+
+17. 杨辉三角    (118)
+
+给定一个非负整数 numRows，生成「杨辉三角」的前 numRows 行。
+
+在「杨辉三角」中，每个数是它左上方和右上方的数的和。
+
+
+示例 1:
+  输入: numRows = 5
+  输出: [[1],[1,1],[1,2,1],[1,3,3,1],[1,4,6,4,1]]
+
+示例 2:
+  输入: numRows = 1
+  输出: [[1]]
+
+提示:
+  1 <= numRows <= 30
+
+Solution:
+  C:
+    /**
+     * Return an array of arrays of size *returnSize.
+     * The sizes of the arrays are returned as *returnColumnSizes array.
+     * Note: Both returned array and *columnSizes array must be malloced, assume caller calls free().
+     */
+    int** generate(int numRows, int* returnSize, int** returnColumnSizes) {
+        // 每一行的第一个和最后一个元素都为1
+        int** ret = (int**)malloc(sizeof(int*) * numRows);
+        for (int i = 0; i < numRows; i++) {
+            ret[i] = (int*)malloc(sizeof(int) * (i + 1));
+            ret[i][0] = 1;
+            ret[i][i] = 1;
+        }
+    
+        // 每一行j索引处的元素都相当于上一行j索引与j-1索引处元素之和
+        for (int i = 2; i < numRows; i++) {
+            for (int j = 1; j < i; j++) {
+                ret[i][j] = ret[i-1][j] + ret[i-1][j-1];
+            }
+        }
+        
+        *returnSize = numRows;
+        *returnColumnSizes = (int*)malloc(sizeof(int) * numRows);
+        for (int i = 0; i < numRows; i++) (*returnColumnSizes)[i] = i + 1;
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<vector<int>> generate(int numRows) {
+            vector<vector<int>> ret(numRows);
+            for (int i = 0; i < numRows; i++) {
+                // 每一行的第一个和最后一个元素都为1
+                ret[i].resize(i+1);
+                ret[i][0] = 1;
+                ret[i][i] = 1;
+    
+                // 每一行j索引处的元素都相当于上一行j索引与j-1索引处元素之和
+                for (int j = 1; j < i; j++) ret[i][j] = ret[i-1][j-1] + ret[i-1][j];
+            }
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public List<List<Integer>> generate(int numRows) {
+            List<List<Integer>> ret = new ArrayList<>(numRows);
+            for (int i = 0; i < numRows; i++) {
+                // 每一行的第一个和最后一个元素都为1
+                List<Integer> temp = new ArrayList<>(i + 1);
+                temp.add(1);
+                
+                // 每一行j索引处的元素都相当于上一行j索引与j-1索引处元素之和
+                for (int j = 1; j < i; j++) temp.add(ret.get(i-1).get(j-1) + ret.get(i-1).get(j));
+    
+                if (i != 0) temp.add(1);
+                ret.add(temp);
+            }
+            return ret;
+        }
+    }
+
+
+18. 杨辉三角 II    (119)
+
+给定一个非负索引 rowIndex，返回「杨辉三角」的第 rowIndex 行。
+
+在「杨辉三角」中，每个数是它左上方和右上方的数的和。
+
+
+示例 1:
+  输入: rowIndex = 3
+  输出: [1,3,3,1]
+
+示例 2:
+  输入: rowIndex = 0
+  输出: [1]
+
+示例 3:
+  输入: rowIndex = 1
+  输出: [1,1]
+
+提示:
+  0 <= rowIndex <= 33
+
+进阶：你可以优化你的算法到 O(rowIndex) 空间复杂度吗？
+
+Solution:
+  C:
+    /**
+     * Note: The returned array must be malloced, assume caller calls free().
+     */
+    int* getRow(int rowIndex, int* returnSize) {
+        // 每一行都等于上一行的内容在末尾加上1，然后将去除首尾的元素自遍历方向依次加上前面的一项
+        int* ret = (int*)malloc(sizeof(int) * (rowIndex+1));
+        for (int i = 0; i <= rowIndex; i++) {
+            ret[i] = 1;
+            for (int j = i-1; j >= 1; j--) ret[j] += ret[j-1];
+        }
+        *returnSize = rowIndex + 1;
+        return ret;
+    }
+
+  C++:
+    class Solution {
+    public:
+        vector<int> getRow(int rowIndex) {
+            // 每一行都等于上一行的内容在末尾加上1，然后将去除首尾的元素自遍历方向依次加上前面的一项
+            vector<int> ret;
+            for (int i = 0; i <= rowIndex; i++) {
+                ret.push_back(1);
+                for (int j = i-1; j >= 1; j--) ret[j] += ret[j-1];
+            }
+            return ret;
+        }
+    };
+
+  Java:
+    class Solution {
+        public List<Integer> getRow(int rowIndex) {
+            // 每一行都等于上一行的内容在末尾加上1，然后将去除首尾的元素自遍历方向依次加上前面的一项
+            List<Integer> ret = new ArrayList<>(rowIndex+1);
+            for (int i = 0; i <= rowIndex; i++) {
+                ret.add(1);
+                for (int j = i-1; j >= 1; j--) ret.set(j, ret.get(j) + ret.get(j-1));
+            }
+            return ret;
+        }
+    }
+
+
+19. 反转字符串中的单词 III    (557)
+
+给定一个字符串 s ，你需要反转字符串中每个单词的字符顺序，同时仍保留空格和单词的初始顺序。
+
+
+示例 1：
+  输入：s = "Let's take LeetCode contest"
+  输出："s'teL ekat edoCteeL tsetnoc"
+
+示例 2:
+  输入： s = "Mr Ding"
+  输出："rM gniD"
+
+提示：
+  1 <= s.length <= 5 * 10^4
+  s 包含可打印的 ASCII 字符。
+  s 不包含任何开头或结尾空格。
+  s 里 至少 有一个词。
+  s 中的所有单词都用一个空格隔开。
+
+Solution:
+  C:
+    void reverse(char* s, int start, int end) {
+        char temp;
+        while (start < end) {
+            temp = s[start];
+            s[start] = s[end];
+            s[end] = temp;
+            start++;
+            end--;
+        }
+    }
+    
+    char* reverseWords(char* s) {
+        int start = 0, end = 0;
+        while (end < strlen(s)) {
+            // 每当碰到空格，反转end处的前一个单词
+            if (s[end] == ' ') {
+                reverse(s, start, end - 1);
+                end++;
+                start = end;
+            }
+            else end++;
+        }
+        // 处理末尾的单词
+        reverse(s, start, end - 1);
+        return s;
+    }
+
+  C++:
+    class Solution {
+    public:
+        void reverse(string& s, int start, int end) {
+            char temp;
+            while (start < end) {
+                temp = s[start];
+                s[start] = s[end];
+                s[end] = temp;
+                start++;
+                end--;
+            }
+        }
+    
+        string reverseWords(string s) {
+            int start = 0, end = 0;
+            while (end < s.length()) {
+                // 每当碰到空格，反转end处的前一个单词
+                if (s[end] == ' ') {
+                    reverse(s, start, end-1);
+                    end++;
+                    start = end;
+                }
+                else end++;
+            }
+            // 处理末尾的单词
+            reverse(s, start, end-1);
+            return s;
+        }
+    };
+
+  Java:
+    class Solution {
+        private static void reverse(char[] s, int start, int end) {
+            char temp;
+            while (start < end) {
+                temp = s[start];
+                s[start] = s[end];
+                s[end] = temp;
+                start++;
+                end--;
+            }
+        }
+    
+        public String reverseWords(String s) {
+            char[] charArray = s.toCharArray();
+            int start = 0, end = 0;
+            while (end < charArray.length) {
+                // 每当碰到空格，反转end处的前一个单词
+                if (charArray[end] == ' ') {
+                    Solution.reverse(charArray, start, end-1);
+                    end++;
+                    start = end;
+                }
+                else end++;
+            }
+            // 处理末尾的单词
+            Solution.reverse(charArray, start, end-1);
+            String ret = new String(charArray);
+            return ret;
+        }
+    }
+
+
+20. 寻找旋转排序数组中的最小值    (153)
+
+已知一个长度为 n 的数组，预先按照升序排列，经由 1 到 n 次 旋转 后，得到输入数组。例如，原数组 nums = [0,1,2,4,5,6,7] 在变化后可能得到：
+  若旋转 4 次，则可以得到 [4,5,6,7,0,1,2]
+  若旋转 7 次，则可以得到 [0,1,2,4,5,6,7]
+注意，数组 [a[0], a[1], a[2], ..., a[n-1]] 旋转一次 的结果为数组 [a[n-1], a[0], a[1], a[2], ..., a[n-2]] 。
+
+给你一个元素值 互不相同 的数组 nums ，它原来是一个升序排列的数组，并按上述情形进行了多次旋转。请你找出并返回数组中的 最小元素 。
+
+你必须设计一个时间复杂度为 O(log n) 的算法解决此问题。
+
+
+示例 1：
+  输入：nums = [3,4,5,1,2]
+  输出：1
+  解释：原数组为 [1,2,3,4,5] ，旋转 3 次得到输入数组。
+
+示例 2：
+  输入：nums = [4,5,6,7,0,1,2]
+  输出：0
+  解释：原数组为 [0,1,2,4,5,6,7] ，旋转 4 次得到输入数组。
+
+示例 3：
+  输入：nums = [11,13,15,17]
+  输出：11
+  解释：原数组为 [11,13,15,17] ，旋转 4 次得到输入数组。
+
+提示：
+  n == nums.length
+  1 <= n <= 5000
+  -5000 <= nums[i] <= 5000
+  nums 中的所有整数 互不相同
+  nums 原来是一个升序排序的数组，并进行了 1 至 n 次旋转
+
+Solution:
+  C:
+    int findMin(int* nums, int numsSize) {
+        int left = 0, right = numsSize - 1;
+        int mid;
+    
+        // 使用二分查找
+        // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+        while (left < right) {
+            mid = left + (right - left) / 2;
+            if (nums[mid] > nums[right]) left = mid + 1;
+            // mid可能正好指向最小元素，所以要保留mid
+            else if (nums[mid] < nums[right]) right = mid;
+        }
+        return nums[left];
+    }
+
+  C++:
+    class Solution {
+    public:
+        int findMin(vector<int>& nums) {
+            int left = 0, right = nums.size() - 1;
+            int mid;
+    
+            // 使用二分查找
+            // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+            while (left < right) {
+                mid = left + (right - left) / 2;
+                if (nums[mid] > nums[right]) left = mid + 1;
+                // mid可能正好指向最小元素，所以要保留mid
+                else if (nums[mid] < nums[right]) right = mid;
+            }
+            return nums[left];
+        }
+    };
+
+  Java:
+    class Solution {
+        public int findMin(int[] nums) {
+            int left = 0, right = nums.length - 1;
+            int mid;
+    
+            // 使用二分查找
+            // 中间值若大于右边值，说明最小值在右边的区间；中间值若小于右边值，说明最小值在左边的区间
+            while (left < right) {
+                mid = left + (right - left) / 2;
+                if (nums[mid] > nums[right]) left = mid + 1;
+                // mid可能正好指向最小元素，所以要保留mid
+                else if (nums[mid] < nums[right]) right = mid;
+            }
+            return nums[left];
+        }
+    }
+
+
+21. 删除有序数组中的重复项    (26)
+
+给你一个 非严格递增排列 的数组 nums ，请你 原地 删除重复出现的元素，使每个元素 只出现一次 ，返回删除后数组的新长度。元素的 相对顺序 应该保持 一致 。然后返回 nums 中唯一元素的个数。
+考虑 nums 的唯一元素的数量为 k。去重后，返回唯一元素的数量 k。
+nums 的前 k 个元素应包含 排序后 的唯一数字。下标 k - 1 之后的剩余元素可以忽略。
+
+判题标准:
+
+系统会用下面的代码来测试你的题解:
+  int[] nums = [...]; // 输入数组
+  int[] expectedNums = [...]; // 长度正确的期望答案
+  int k = removeDuplicates(nums); // 调用
+  assert k == expectedNums.length;
+  for (int i = 0; i < k; i++) assert nums[i] == expectedNums[i];
+如果所有断言都通过，那么您的题解将被 通过。
+
+示例 1：
+  输入：nums = [1,1,2]
+  输出：2, nums = [1,2,_]
+  解释：函数应该返回新的长度 2 ，并且原数组 nums 的前两个元素被修改为 1, 2 。不需要考虑数组中超出新长度后面的元素。
+
+示例 2：
+  输入：nums = [0,0,1,1,1,2,2,3,3,4]
+  输出：5, nums = [0,1,2,3,4,_,_,_,_,_]
+  解释：函数应该返回新的长度 5 ， 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4 。不需要考虑数组中超出新长度后面的元素。
+
+提示：
+  1 <= nums.length <= 3 * 10^4
+  -100 <= nums[i] <= 100
+  nums 已按 非递减 顺序排列。
+
+Solution:
+  C:
+    int removeDuplicates(int* nums, int numsSize) {
+        // 创建快慢指针，快指针用于读取，慢指针用于在数组中写入
+        int fast = 0, slow = 0;
+        // 创建mem来记录现有的元素
+        int mem;
+        int k = 0;
+    
+        while (fast < numsSize) {
+            nums[slow++] = nums[fast];
+            k++;
+            mem = nums[fast];
+            while (fast < numsSize && nums[fast] == mem) fast++;
+        }
+        return k;
+    }
+
+  C++:
+    class Solution {
+    public:
+        int removeDuplicates(vector<int>& nums) {
+            // 创建快慢指针，快指针用于读取，慢指针用于在数组中写入
+            int fast = 0, slow = 0;
+            // 创建mem来记录现有的元素
+            int mem;
+            int k = 0;
+    
+            while (fast < nums.size()) {
+                nums[slow++] = nums[fast];
+                k++;
+                mem = nums[fast];
+                while (fast < nums.size() && nums[fast] == mem) fast++;
+            }
+            return k;
+        }
+    };
+
+  Java:
+    class Solution {
+        public int removeDuplicates(int[] nums) {
+            // 创建快慢指针，快指针用于读取，慢指针用于在数组中写入
+            int fast = 0, slow = 0;
+            // 创建mem来记录现有的元素
+            int mem;
+            int k = 0;
+    
+            while (fast < nums.length) {
+                nums[slow++] = nums[fast];
+                k++;
+                mem = nums[fast];
+                while (fast < nums.length && nums[fast] == mem) fast++;
+            }
+            return k;
+        }
+    }
+
+
+22. 移动零    (283)
+
+给定一个数组 nums，编写一个函数将所有 0 移动到数组的末尾，同时保持非零元素的相对顺序。
+
+请注意 ，必须在不复制数组的情况下原地对数组进行操作。
+
+
+示例 1:
+  输入: nums = [0,1,0,3,12]
+  输出: [1,3,12,0,0]
+
+示例 2:
+  输入: nums = [0]
+  输出: [0]
+
+提示:
+  1 <= nums.length <= 10^4
+  -2^31 <= nums[i] <= 2^31 - 1
+ 
+进阶：你能尽量减少完成的操作次数吗？
+
+Solution:
+  C:
+    void moveZeroes(int* nums, int numsSize) {
+        // 设置快慢指针，快指针用于读取，慢指针用于写入
+        int fast = 0, slow = 0;
+        while (fast < numsSize) {
+            if (nums[fast] == 0) fast++;
+            else nums[slow++] = nums[fast++];
+        }
+    
+        // 将慢指针所在索引以后全部置为0
+        while (slow < numsSize) nums[slow++] = 0;
+    }
+
+  C++:
+    class Solution {
+    public:
+        void moveZeroes(vector<int>& nums) {
+            // 设置快慢指针，快指针用于读取，慢指针用于写入
+            int fast = 0, slow = 0;
+            while (fast < nums.size()) {
+                if (nums[fast] == 0) fast++;
+                else nums[slow++] = nums[fast++];
+            }
+    
+            // 将慢指针所在索引以后全部置为0
+            while (slow < nums.size()) nums[slow++] = 0;
+        }
+    };
+
+  Java:
+    class Solution {
+        public void moveZeroes(int[] nums) {
+            // 设置快慢指针，快指针用于读取，慢指针用于写入
+            int fast = 0, slow = 0;
+            while (fast < nums.length) {
+                if (nums[fast] == 0) fast++;
+                else nums[slow++] = nums[fast++];
+            }
+    
+            // 将慢指针所在索引以后全部置为0
+            while (slow < nums.length) nums[slow++] = 0;
         }
     }
 
