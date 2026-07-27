@@ -1873,3 +1873,140 @@ Solution:
     }
 
 
+17. 删除排序链表中的重复元素 II    (82)
+
+给定一个已排序的链表的头 head ， 删除原始链表中所有重复数字的节点，只留下不同的数字 。返回 已排序的链表 。
+
+
+示例 1：
+  输入：head = [1,2,3,3,4,4,5]
+  输出：[1,2,5]
+
+示例 2：
+  输入：head = [1,1,1,2,3]
+  输出：[2,3]
+
+提示：
+  链表中节点数目在范围 [0, 300] 内
+  -100 <= Node.val <= 100
+  题目数据保证链表已经按升序 排列
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* deleteDuplicates(struct ListNode* head) {
+        // 设置快慢指针
+        struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+        dummy->next = head;
+        struct ListNode* fast = head;
+        struct ListNode* slow = dummy;
+        int mem;
+    
+        // 如果出现重复元素，操作快指针删除，再将断开的链表重连起来
+        while (fast != NULL && fast->next != NULL) {
+            if (fast->val != fast->next->val) fast = fast->next;
+            else {
+                while (slow->next != fast) slow = slow->next;
+                mem = fast->val;
+                while (fast != NULL && fast->val == mem) {
+                    struct ListNode* next = fast->next;
+                    free(fast);
+                    fast = next;
+                }
+                slow->next = fast;
+            }
+        }
+        
+        struct ListNode* ret = dummy->next;
+        free(dummy);
+        return ret;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* deleteDuplicates(ListNode* head) {
+            // 设置快慢指针
+            ListNode* dummy = new ListNode();
+            dummy->next = head;
+            ListNode* fast = head;
+            ListNode* slow = dummy;
+            int mem;
+    
+            // 如果出现重复元素，操作快指针删除，再将断开的链表重连起来
+            while (fast != NULL && fast->next != NULL) {
+                if (fast->val != fast->next->val) fast = fast->next;
+                else {
+                    while (slow->next != fast) slow = slow->next;
+                    mem = fast->val;
+                    while (fast != NULL && fast->val == mem) {
+                        ListNode* next = fast->next;
+                        delete fast;
+                        fast = next;
+                    }
+                    slow->next = fast;
+                }
+            }
+            
+            ListNode* ret = dummy->next;
+            delete dummy;
+            return ret;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode deleteDuplicates(ListNode head) {
+            // 设置快慢指针
+            ListNode dummy = new ListNode();
+            dummy.next = head;
+            ListNode fast = head;
+            ListNode slow = dummy;
+            int mem;
+    
+            // 如果出现重复元素，操作快指针删除，再将断开的链表重连起来
+            while (fast != null && fast.next != null) {
+                if (fast.val != fast.next.val) fast = fast.next;
+                else {
+                    while (slow.next != fast) slow = slow.next;
+                    mem = fast.val;
+                    while (fast != null && fast.val == mem) {
+                        ListNode next = fast.next;
+                        fast = next;
+                    }
+                    slow.next = fast;
+                }
+            }
+            
+            return dummy.next;
+        }
+    }
+
+
+18. 
