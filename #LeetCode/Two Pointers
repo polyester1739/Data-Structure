@@ -2009,4 +2009,406 @@ Solution:
     }
 
 
-18. 
+18. 两数相加    (2)
+
+给你两个 非空 的链表，表示两个非负的整数。它们每位数字都是按照 逆序 的方式存储的，并且每个节点只能存储 一位 数字。
+
+请你将两个数相加，并以相同形式返回一个表示和的链表。
+
+你可以假设除了数字 0 之外，这两个数都不会以 0 开头。
+
+
+示例 1：
+  输入：l1 = [2,4,3], l2 = [5,6,4]
+  输出：[7,0,8]
+  解释：342 + 465 = 807.
+
+示例 2：
+  输入：l1 = [0], l2 = [0]
+  输出：[0]
+
+示例 3：
+  输入：l1 = [9,9,9,9,9,9,9], l2 = [9,9,9,9]
+  输出：[8,9,9,9,0,0,0,1]
+
+提示：
+  每个链表中的节点数在范围 [1, 100] 内
+  0 <= Node.val <= 9
+  题目数据保证列表表示的数字不含前导零
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+        // 设置并行指针指向两链表开头
+        struct ListNode* p1 = l1;
+        struct ListNode* p2 = l2;
+    
+        // 创建返回链表
+        struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+        dummy->next = NULL;
+        struct ListNode* tail = dummy;
+    
+        // 两条链表走完且没有进位时才能结束循环
+        int result;
+        int carry = 0;
+        while (p1 != NULL || p2 != NULL || carry == 1) {
+            result = carry;
+    
+            if (p1 != NULL) {
+                result += p1->val;
+                p1 = p1->next;
+            }
+    
+            if (p2 != NULL) {
+                result += p2->val;
+                p2 = p2->next;
+            }
+    
+            carry = result / 10;
+            result = result % 10;
+    
+            struct ListNode* newnode = (struct ListNode*)malloc(sizeof(struct ListNode));
+            newnode->val = result;
+            newnode->next = NULL;
+            tail->next = newnode;
+            tail = newnode;
+        }
+        
+        struct ListNode* ret = dummy->next;
+        free(dummy);
+        return ret;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+            // 设置并行指针指向两链表开头
+            ListNode* p1 = l1;
+            ListNode* p2 = l2;
+    
+            // 创建返回链表
+            ListNode* dummy = new ListNode();
+            dummy->next = NULL;
+            ListNode* tail = dummy;
+    
+            // 两条链表走完且没有进位时才能结束循环
+            int result;
+            int carry = 0;
+            while (p1 != NULL || p2 != NULL || carry == 1) {
+                result = carry;
+    
+                if (p1 != NULL) {
+                    result += p1->val;
+                    p1 = p1->next;
+                }
+    
+                if (p2 != NULL) {
+                    result += p2->val;
+                    p2 = p2->next;
+                }
+    
+                carry = result / 10;
+                result = result % 10;
+    
+                ListNode* newnode = new ListNode();
+                newnode->val = result;
+                newnode->next = NULL;
+                tail->next = newnode;
+                tail = newnode;
+            }
+            
+            ListNode* ret = dummy->next;
+            delete dummy;
+            return ret;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+            // 设置并行指针指向两链表开头
+            ListNode p1 = l1;
+            ListNode p2 = l2;
+    
+            // 创建返回链表
+            ListNode dummy = new ListNode();
+            dummy.next = null;
+            ListNode tail = dummy;
+    
+            // 两条链表走完且没有进位时才能结束循环
+            int result;
+            int carry = 0;
+            while (p1 != null || p2 != null || carry == 1) {
+                result = carry;
+    
+                if (p1 != null) {
+                    result += p1.val;
+                    p1 = p1.next;
+                }
+    
+                if (p2 != null) {
+                    result += p2.val;
+                    p2 = p2.next;
+                }
+    
+                carry = result / 10;
+                result = result % 10;
+    
+                ListNode newnode = new ListNode();
+                newnode.val = result;
+                newnode.next = null;
+                tail.next = newnode;
+                tail = newnode;
+            }
+            
+            return dummy.next;
+        }
+    }
+
+
+19. 两数相加 II    (445)
+
+给你两个 非空 链表来代表两个非负整数。数字最高位位于链表开始位置。它们的每个节点只存储一位数字。将这两数相加会返回一个新的链表。
+
+你可以假设除了数字 0 之外，这两个数字都不会以零开头。
+
+
+示例1：
+  输入：l1 = [7,2,4,3], l2 = [5,6,4]
+  输出：[7,8,0,7]
+
+示例2：
+  输入：l1 = [2,4,3], l2 = [5,6,4]
+  输出：[8,0,7]
+
+示例3：
+  输入：l1 = [0], l2 = [0]
+  输出：[0]
+
+提示：
+  链表的长度范围为 [1, 100]
+  0 <= node.val <= 9
+  输入数据保证链表代表的数字无前导 0
+
+进阶：如果输入链表不能翻转该如何解决？
+
+Solution:
+  C:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     struct ListNode *next;
+     * };
+     */
+    struct ListNode* reverse(struct ListNode* head) {
+        if (head == NULL || head->next == NULL) return head;
+        else {
+            struct ListNode* last = reverse(head->next);
+            head->next->next = head;
+            head->next = NULL;
+            return last;
+        }
+    }
+    
+    struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+        // 在反转的两个链表的开头设置并行指针
+        struct ListNode* p1 = reverse(l1);
+        struct ListNode* p2 = reverse(l2);
+    
+        // 创建返回链表
+        struct ListNode* dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+        dummy->next = NULL;
+        struct ListNode* tail = dummy;
+    
+        // 两条链表走完且没有进位时才能结束循环
+        int result;
+        int carry = 0;
+        while (p1 != NULL || p2 != NULL || carry == 1) {
+            if (carry == 1) result = 1;
+            else result = 0;
+    
+            if (p1 != NULL) {
+                result += p1->val;
+                p1 = p1->next;
+            } 
+    
+            if (p2 != NULL) {
+                result += p2->val;
+                p2 = p2->next;
+            }
+    
+            carry = result / 10;
+            result = result % 10;
+    
+            struct ListNode* newnode = (struct ListNode*)malloc(sizeof(struct ListNode));
+            newnode->val = result;
+            newnode->next = NULL;
+            tail->next = newnode;
+            tail = newnode;
+        }
+    
+        struct ListNode* ret = reverse(dummy->next);
+        free(dummy);
+        return ret;
+    }
+
+  C++:
+    /**
+     * Definition for singly-linked list.
+     * struct ListNode {
+     *     int val;
+     *     ListNode *next;
+     *     ListNode() : val(0), next(nullptr) {}
+     *     ListNode(int x) : val(x), next(nullptr) {}
+     *     ListNode(int x, ListNode *next) : val(x), next(next) {}
+     * };
+     */
+    class Solution {
+    public:
+        ListNode* reverse(ListNode* head) {
+            if (head == NULL || head->next == NULL) return head;
+            else {
+                ListNode* last = reverse(head->next);
+                head->next->next = head;
+                head->next = NULL;
+                return last;
+            }
+        }
+    
+        ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+            // 在反转的两个链表的开头设置并行指针
+            ListNode* p1 = reverse(l1);
+            ListNode* p2 = reverse(l2);
+    
+            // 创建返回链表
+            ListNode* dummy = new ListNode();
+            dummy->next = NULL;
+            ListNode* tail = dummy;
+    
+            // 两条链表走完且没有进位时才能结束循环
+            int result;
+            int carry = 0;
+            while (p1 != NULL || p2 != NULL || carry == 1) {
+                if (carry == 1) result = 1;
+                else result = 0;
+    
+                if (p1 != NULL) {
+                    result += p1->val;
+                    p1 = p1->next;
+                } 
+    
+                if (p2 != NULL) {
+                    result += p2->val;
+                    p2 = p2->next;
+                }
+    
+                carry = result / 10;
+                result = result % 10;
+    
+                ListNode* newnode = new ListNode();
+                newnode->val = result;
+                newnode->next = NULL;
+                tail->next = newnode;
+                tail = newnode;
+            }
+    
+            ListNode* ret = reverse(dummy->next);
+            delete dummy;
+            return ret;
+        }
+    };
+
+  Java:
+    /**
+     * Definition for singly-linked list.
+     * public class ListNode {
+     *     int val;
+     *     ListNode next;
+     *     ListNode() {}
+     *     ListNode(int val) { this.val = val; }
+     *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+     * }
+     */
+    class Solution {
+        public ListNode reverse(ListNode head) {
+            if (head == null || head.next == null) return head;
+            else {
+                ListNode last = reverse(head.next);
+                head.next.next = head;
+                head.next = null;
+                return last;
+            }
+        }
+    
+        public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+            // 在反转的两个链表的开头设置并行指针
+            ListNode p1 = reverse(l1);
+            ListNode p2 = reverse(l2);
+    
+            // 创建返回链表
+            ListNode dummy = new ListNode();
+            dummy.next = null;
+            ListNode tail = dummy;
+    
+            // 两条链表走完且没有进位时才能结束循环
+            int result;
+            int carry = 0;
+            while (p1 != null || p2 != null || carry == 1) {
+                if (carry == 1) result = 1;
+                else result = 0;
+    
+                if (p1 != null) {
+                    result += p1.val;
+                    p1 = p1.next;
+                } 
+    
+                if (p2 != null) {
+                    result += p2.val;
+                    p2 = p2.next;
+                }
+    
+                carry = result / 10;
+                result = result % 10;
+    
+                ListNode newnode = new ListNode();
+                newnode.val = result;
+                newnode.next = null;
+                tail.next = newnode;
+                tail = newnode;
+            }
+    
+            return reverse(dummy.next);
+        }
+    }
+
+
+20.
