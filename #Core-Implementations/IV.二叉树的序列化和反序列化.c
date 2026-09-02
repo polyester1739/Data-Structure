@@ -24,6 +24,8 @@ int** preOrderInOrderSerialize(TreeNode* root, int* returnSize, int** returnColu
 TreeNode* preOrderInOrderDeserialize(int** data, int* dataSize, int** dataColSizes);
 int** inOrderPostOrderSerialize(TreeNode* root, int* returnSize, int** returnColumnSizes);
 TreeNode* inOrderPostOrderDeserialize(int** data, int* dataSize, int** dataColSizes);
+char* levelOrderSerialize(TreeNode* root);
+TreeNode* levelOrderDeserialize(char* data);
 void inOrderPrint(const TreeNode* root);
 void stringPrint(const char* str);
 void matrixPrint(int** matrix, int matrixSize, int* matrixColSizes);
@@ -82,6 +84,18 @@ int main(int argc, const char* argv[]) {
 	free(dataColSizes_3_2);
 	deleteTree(root_3_2);
 	deleteTree(root_3);
+
+	char* serialized_4 = "31,32,33,#,#,34,35,#,#,#,#,";
+	TreeNode* root_4 = levelOrderDeserialize(serialized_4);
+	printf("Deserialized tree_4 (in-order): ");
+	inOrderPrint(root_4);
+
+	char* string_4 = levelOrderSerialize(root_4);
+	printf("Serialized tree_4: ");
+	stringPrint(string_4);
+
+	deleteString(string_4);
+	deleteTree(root_4);
 	return 0;
 }
 
@@ -350,6 +364,92 @@ TreeNode* inOrderPostOrderDeserialize(int** data, int* dataSize, int** dataColSi
 	for (int i = 0; i < (*dataColSizes)[0]; i++) valToIndex[data[0][i]] = i;
 	TreeNode* root = _inOrderPostDeserialize(data[1], (*dataColSizes)[1] - 1, data[0], 0, (*dataColSizes)[0] - 1, valToIndex);
 	free(valToIndex);
+	return root;
+}
+
+/* 层序遍历序列化 */
+
+char* levelOrderSerialize(TreeNode* root) {
+	char* stringBuilder = (char*)malloc(sizeof(char) * STRING_BUILDER_SIZE);
+	if (!stringBuilder) exit(EXIT_FAILURE);
+	stringBuilder[0] = '\0';
+	TreeNode** queue = (TreeNode**)malloc(sizeof(TreeNode*) * TOKEN_COUNT);
+	if (!queue) exit(EXIT_FAILURE);
+	int front = 0, rear = 0;
+	queue[rear++] = root;
+	while (front < rear) {
+		int size = rear - front;
+		for (int i = 0; i < size; i++) {
+			TreeNode* cur = queue[front++];
+			if (cur == NULL) {
+				strcat_s(stringBuilder, STRING_BUILDER_SIZE, NULL_SIGN);
+				strcat_s(stringBuilder, STRING_BUILDER_SIZE, SEP_SIGN);
+			}
+			else {
+				char* buffer = (char*)malloc(sizeof(char) * BUFFER_SIZE);
+				if (!buffer) exit(EXIT_FAILURE);
+				buffer[0] = '\0';
+				sprintf_s(buffer, BUFFER_SIZE, "%d", cur->val);
+				strcat_s(stringBuilder, STRING_BUILDER_SIZE, buffer);
+				strcat_s(stringBuilder, STRING_BUILDER_SIZE, SEP_SIGN);
+				free(buffer);
+				queue[rear++] = cur->left;
+				queue[rear++] = cur->right;
+			}
+		}
+	}
+	free(queue);
+	return stringBuilder;
+}
+
+TreeNode* levelOrderDeserialize(char* data) {
+	char* copy = _strdup(data);
+	if (!copy) exit(EXIT_FAILURE);
+	char** nodes = (char**)malloc(sizeof(char*) * TOKEN_COUNT);
+	if (!nodes) exit(EXIT_FAILURE);
+	int nodeCount = 0;
+
+	char* context = NULL;
+	char* token = strtok_s(copy, SEP_SIGN, &context);
+	while (token != NULL) {
+		nodes[nodeCount++] = token;
+		token = strtok_s(NULL, SEP_SIGN, &context);
+	}
+
+	if (strcmp(nodes[0], NULL_SIGN) == 0) {
+		free(nodes);
+		free(copy);
+		return NULL;
+	}
+	TreeNode* root = createTreeNode(atoi(nodes[0]));
+	TreeNode** queue = (TreeNode**)malloc(sizeof(TreeNode*) * TOKEN_COUNT);
+	if (!queue) exit(EXIT_FAILURE);
+	int front = 0, rear = 0, index = 1;
+	queue[rear++] = root;
+	while (front < rear) {
+		int size = rear - front;
+		for (int i = 0; i < size; i++) {
+			TreeNode* cur = queue[front++];
+
+			char* left = nodes[index++];
+			if (strcmp(left, NULL_SIGN) != 0) {
+				TreeNode* newnode = createTreeNode(atoi(left));
+				cur->left = newnode;
+				queue[rear++] = newnode;
+			}
+
+			char* right = nodes[index++];
+			if (strcmp(right, NULL_SIGN) != 0) {
+				TreeNode* newnode = createTreeNode(atoi(right));
+				cur->right = newnode;
+				queue[rear++] = newnode;
+			}
+		}
+	}
+	
+	free(nodes);
+	free(copy);
+	free(queue);
 	return root;
 }
 
